@@ -9,7 +9,7 @@ const config: Config = {
 		'^.+\\.(ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
 	},
 	moduleNameMapper: {
-		'^@lib(.*)$': '<rootDir>/../src/lib/$1',
+		'^@/(.*)$': '<rootDir>/../src/$1',
 		'^@tests(.*)$': '<rootDir>/$1',
 	},
 }

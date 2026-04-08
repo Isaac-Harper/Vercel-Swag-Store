@@ -19,11 +19,9 @@
 			}
 		],
 		"paths": {
-			"@lib": ["./src/lib"],
-			"@lib/*": ["./src/lib/*"]
+			"@/*": ["./src/*"]
 		},
-		"types": ["tailwindcss"]
-	},
+},
 	"include": [
 		"next-env.d.ts",
 		"**/*.ts",
