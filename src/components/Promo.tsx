@@ -25,8 +25,8 @@ export function Promo() {
   if (!alert?.active) return null;
 
   return (
-    <div>
-      <p>{alert.message}</p>
+    <div className="w-full bg-black py-2">
+      <p className="text-center text-sm text-white">{alert.message}</p>
     </div>
   );
 }
