@@ -3,7 +3,7 @@ import { Hero } from '@/components/Hero'
 
 export default function Home() {
 	return (
-		<main>
+		<>
 			<Hero
 				heading="Wear the framework you ship with."
 				subheading="Premium swag for developers who build with Vercel. From tees to tech gear, represent the tools you love."
@@ -14,6 +14,6 @@ export default function Home() {
 				buttonTextColor="#fff"
 			/>
 			<Featured />
-		</main>
+		</>
 	)
 }
