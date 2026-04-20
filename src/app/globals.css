@@ -47,7 +47,7 @@
 	}
 
 	body {
-		@apply overflow-x-clip min-h-dvh;
+		@apply overflow-x-clip min-h-dvh flex flex-col;
 	}
 
 	::-moz-selection {
