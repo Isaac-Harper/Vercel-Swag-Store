@@ -1,5 +1,8 @@
 import Link from 'next/link'
 import { CartBag } from '@/components/CartBag'
+import { cartItems } from '@/data/cart'
+
+const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
 
 export function Header() {
 	return (
@@ -30,10 +33,10 @@ export function Header() {
 				>
 					Search
 				</Link>
-				<button type="button" className="ml-auto flex items-center gap-2 group cursor-pointer">
-					<CartBag itemCount={3} />
+				<Link href="/cart" className="ml-auto flex items-center gap-2 group">
+					<CartBag itemCount={itemCount} />
 					Cart
-				</button>
+				</Link>
 			</nav>
 		</header>
 	)

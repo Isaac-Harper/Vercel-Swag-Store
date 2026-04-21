@@ -16,13 +16,20 @@ export const metadata: Metadata = {
 	},
 }
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+	children,
+	modal,
+}: {
+	children: ReactNode
+	modal: ReactNode
+}) {
 	return (
 		<html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
 			<body>
 				<Header />
 				<Promo />
 				<main className="flex-1">{children}</main>
+				{modal}
 				<Footer />
 			</body>
 		</html>
