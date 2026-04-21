@@ -1,0 +1,48 @@
+'use client'
+
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useOptimistic,
+	type ReactNode,
+} from 'react'
+
+type CartCountContextValue = {
+	count: number
+	addOptimistic: (amount: number) => void
+}
+
+const CartCountContext = createContext<CartCountContextValue | null>(null)
+
+export function CartCountProvider({
+	initialCount,
+	children,
+}: {
+	initialCount: number
+	children: ReactNode
+}) {
+	const [count, addOptimisticInternal] = useOptimistic(
+		initialCount,
+		(state: number, amount: number) => state + amount,
+	)
+
+	const addOptimistic = useCallback(
+		(amount: number) => {
+			addOptimisticInternal(amount)
+		},
+		[addOptimisticInternal],
+	)
+
+	return (
+		<CartCountContext.Provider value={{ count, addOptimistic }}>
+			{children}
+		</CartCountContext.Provider>
+	)
+}
+
+export function useCartCount() {
+	const ctx = useContext(CartCountContext)
+	if (!ctx) throw new Error('useCartCount must be used within CartCountProvider')
+	return ctx
+}
