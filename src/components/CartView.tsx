@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import { removeFromCart, updateCartQuantity } from '@/actions/cart'
+import { PendingButton } from '@/components/PendingButton'
 import type { CartItem } from '@/lib/cart'
+import { formatPrice } from '@/lib/format'
 
 export function CartView({
 	items,
@@ -25,6 +27,7 @@ export function CartView({
 							const decrement = updateCartQuantity.bind(null, product.slug, quantity - 1)
 							const increment = updateCartQuantity.bind(null, product.slug, quantity + 1)
 							const remove = removeFromCart.bind(null, product.slug)
+							const atStockCap = quantity >= product.stock
 							return (
 								<li key={product.slug} className="flex gap-3">
 									<div className="relative h-20 w-20 shrink-0 overflow-hidden rounded">
@@ -46,38 +49,39 @@ export function CartView({
 										<div className="flex items-start justify-between gap-2">
 											<h3 className="font-medium">{product.name}</h3>
 											<form action={remove}>
-												<button
+												<PendingButton
 													type="submit"
 													aria-label={`Remove ${product.name}`}
-													className="cursor-pointer text-xs text-gray-500 transition-opacity hover:opacity-70 active:opacity-50"
+													className="cursor-pointer text-xs text-gray-500 transition-opacity hover:opacity-70 active:opacity-50 disabled:cursor-not-allowed disabled:opacity-50"
 												>
 													Remove
-												</button>
+												</PendingButton>
 											</form>
 										</div>
 										<div className="flex items-center justify-between">
 											<div className="flex items-center gap-2">
 												<form action={decrement}>
-													<button
+													<PendingButton
 														type="submit"
 														aria-label={`Decrease ${product.name}`}
-														className="flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-300 transition hover:opacity-70 active:opacity-50"
+														className="flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-300 transition hover:opacity-70 active:opacity-50 disabled:cursor-not-allowed disabled:opacity-30"
 													>
 														−
-													</button>
+													</PendingButton>
 												</form>
 												<span className="min-w-[1.5rem] text-center text-sm">{quantity}</span>
 												<form action={increment}>
-													<button
+													<PendingButton
 														type="submit"
 														aria-label={`Increase ${product.name}`}
-														className="flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-300 transition hover:opacity-70 active:opacity-50"
+														disabled={atStockCap}
+														className="flex h-7 w-7 cursor-pointer items-center justify-center rounded border border-gray-300 transition hover:opacity-70 active:opacity-50 disabled:cursor-not-allowed disabled:opacity-30"
 													>
 														+
-													</button>
+													</PendingButton>
 												</form>
 											</div>
-											<p className="text-sm">${product.price * quantity}</p>
+											<p className="text-sm">{formatPrice(product.price * quantity)}</p>
 										</div>
 									</div>
 								</li>
@@ -89,7 +93,7 @@ export function CartView({
 			<div className="border-t border-gray-200 p-4">
 				<div className="mb-3 flex items-center justify-between text-sm">
 					<span className="font-medium">Subtotal</span>
-					<span className="font-medium">${subtotal}</span>
+					<span className="font-medium">{formatPrice(subtotal)}</span>
 				</div>
 				<button
 					type="button"

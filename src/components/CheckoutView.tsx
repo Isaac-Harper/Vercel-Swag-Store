@@ -10,6 +10,7 @@ import {
 import { submitCheckout, type CheckoutState } from '@/actions/checkout'
 import { Required } from '@/components/Required'
 import { usStates } from '@/data/usStates'
+import { formatPrice } from '@/lib/format'
 
 function formatCardNumber(value: string) {
 	const digits = value.replace(/\D/g, '').slice(0, 19)
@@ -368,7 +369,7 @@ export function CheckoutView({
 			<div className="border-t border-gray-200 p-4">
 				<div className="mb-3 flex items-center justify-between text-sm">
 					<span className="font-medium">Total</span>
-					<span className="font-medium">${subtotal}</span>
+					<span className="font-medium">{formatPrice(subtotal)}</span>
 				</div>
 				<button
 					type="submit"

@@ -51,25 +51,33 @@ export async function getCartCount(): Promise<number> {
 }
 
 export async function addLine(slug: string, quantity = 1) {
+	const product = products.find((p) => p.slug === slug)
+	if (!product) return
 	const lines = await readLines()
 	const existing = lines.find((l) => l.slug === slug)
+	const desired = (existing?.quantity ?? 0) + quantity
+	const clamped = Math.min(desired, product.stock)
+	if (clamped <= 0) return
 	if (existing) {
-		existing.quantity += quantity
+		existing.quantity = clamped
 	} else {
-		lines.push({ slug, quantity })
+		lines.push({ slug, quantity: clamped })
 	}
 	await writeLines(lines)
 }
 
 export async function setLineQuantity(slug: string, quantity: number) {
+	const product = products.find((p) => p.slug === slug)
+	if (!product) return
+	const clamped = Math.max(0, Math.min(quantity, product.stock))
 	const lines = await readLines()
-	if (quantity <= 0) {
+	if (clamped <= 0) {
 		await writeLines(lines.filter((l) => l.slug !== slug))
 		return
 	}
 	const existing = lines.find((l) => l.slug === slug)
 	if (existing) {
-		existing.quantity = quantity
+		existing.quantity = clamped
 		await writeLines(lines)
 	}
 }

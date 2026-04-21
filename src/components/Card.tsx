@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { formatPrice } from '@/lib/format'
 
 type CardProps = {
 	slug: string
@@ -30,7 +31,7 @@ export function Card({ slug, name, price, color, image }: CardProps) {
 				</div>
 				<div className="flex items-center justify-between">
 					<h3 className="font-medium group-hover:underline">{name}</h3>
-					<p className="text-sm">${price}</p>
+					<p className="text-sm">{formatPrice(price)}</p>
 				</div>
 			</Link>
 		</li>

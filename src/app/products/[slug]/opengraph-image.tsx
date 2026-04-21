@@ -1,9 +1,13 @@
 import { ImageResponse } from 'next/og'
-import { getProductBySlug } from '@/data/products'
+import { getProductBySlug, products } from '@/data/products'
 
 export const alt = 'Vercel Swag Store product'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
+
+export function generateStaticParams() {
+	return products.map((p) => ({ slug: p.slug }))
+}
 
 export default async function Image({
 	params,
@@ -76,7 +80,9 @@ export default async function Image({
 					<div style={{ fontSize: 72, fontWeight: 700, color: '#000000' }}>
 						{product.name}
 					</div>
-					<div style={{ fontSize: 56, color: '#000000' }}>${product.price}</div>
+					<div style={{ fontSize: 56, color: '#000000' }}>
+						{`$${product.price}`}
+					</div>
 				</div>
 			</div>
 		),
