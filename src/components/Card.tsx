@@ -2,17 +2,17 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 type CardProps = {
+	slug: string
 	name: string
 	price: number
 	color: string
-	href: string
 	image?: string
 }
 
-export function Card({ name, price, color, href, image }: CardProps) {
+export function Card({ slug, name, price, color, image }: CardProps) {
 	return (
 		<li>
-			<Link href={href} className="flex flex-col gap-3 group">
+			<Link href={`/products/${slug}`} className="flex flex-col gap-3 group">
 				<div className="relative w-full pb-[100%]">
 					{image ? (
 						<Image

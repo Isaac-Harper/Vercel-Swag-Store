@@ -1,5 +1,7 @@
 import { CartDrawer } from '@/components/CartDrawer'
+import { getCartItems } from '@/lib/cart'
 
-export default function CartInterceptedPage() {
-	return <CartDrawer />
+export default async function CartInterceptedPage() {
+	const items = await getCartItems()
+	return <CartDrawer items={items} />
 }

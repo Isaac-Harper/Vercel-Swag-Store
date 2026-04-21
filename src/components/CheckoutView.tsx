@@ -9,7 +9,6 @@ import {
 } from 'react'
 import { submitCheckout, type CheckoutState } from '@/actions/checkout'
 import { Required } from '@/components/Required'
-import { cartItems } from '@/data/cart'
 import { usStates } from '@/data/usStates'
 
 function formatCardNumber(value: string) {
@@ -43,13 +42,17 @@ function formatExpiry(next: string, prev: string): string {
 	return digits.length >= 3 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits
 }
 
-const subtotal = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
-
 const statesPattern = usStates.map((s) => s.name).join('|')
 
 const initialState: CheckoutState = { ok: false }
 
-export function CheckoutView({ onDoneAction }: { onDoneAction: () => void }) {
+export function CheckoutView({
+	subtotal,
+	onDoneAction,
+}: {
+	subtotal: number
+	onDoneAction: () => void
+}) {
 	const [state, formAction, pending] = useActionState(submitCheckout, initialState)
 	const [cardNumber, setCardNumber] = useState('')
 	const [expiry, setExpiry] = useState('')
@@ -113,7 +116,7 @@ export function CheckoutView({ onDoneAction }: { onDoneAction: () => void }) {
 				<button
 					type="button"
 					onClick={onDoneAction}
-					className="mt-4 w-full max-w-xs rounded bg-black py-3 text-sm font-medium text-white"
+					className="mt-4 w-full max-w-xs cursor-pointer rounded bg-black py-3 text-sm font-medium text-white transition hover:opacity-80 active:opacity-60"
 				>
 					Done
 				</button>
@@ -370,7 +373,7 @@ export function CheckoutView({ onDoneAction }: { onDoneAction: () => void }) {
 				<button
 					type="submit"
 					disabled={pending}
-					className="w-full rounded bg-black py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-300"
+					className="w-full cursor-pointer rounded bg-black py-3 text-sm font-medium text-white transition hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:opacity-100"
 				>
 					{pending ? 'Placing order…' : 'Place order'}
 				</button>

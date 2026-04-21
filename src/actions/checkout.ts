@@ -1,7 +1,9 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { usStates } from '@/data/usStates'
+import { clearCart, getCartItems } from '@/lib/cart'
 
 const stateNames = usStates.map((s) => s.name)
 
@@ -55,8 +57,12 @@ export async function submitCheckout(
 	_prev: CheckoutState,
 	formData: FormData,
 ): Promise<CheckoutState> {
-	const result = checkoutSchema.safeParse(Object.fromEntries(formData))
+	const items = await getCartItems()
+	if (items.length === 0) {
+		return { ok: false, formError: 'Your cart is empty.' }
+	}
 
+	const result = checkoutSchema.safeParse(Object.fromEntries(formData))
 	if (!result.success) {
 		return {
 			ok: false,
@@ -76,6 +82,14 @@ export async function submitCheckout(
 	}
 
 	// TODO: persist order, charge card, etc.
+	// For now we just acknowledge the items + buyer info and clear the cart.
+	const lineSummary = items
+		.map((i) => `${i.quantity}× ${i.product.slug}`)
+		.join(', ')
+	console.log('[checkout] order placed:', { buyer: result.data.email, items: lineSummary })
+
+	await clearCart()
+	revalidatePath('/', 'layout')
 
 	return { ok: true }
 }

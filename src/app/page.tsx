@@ -8,10 +8,7 @@ export default function Home() {
 				heading="Wear the framework you ship with."
 				subheading="Premium swag for developers who build with Vercel. From tees to tech gear, represent the tools you love."
 				buttonText="Browse all Products"
-				bgColor="#fff"
-				buttonColor="#000"
-				textColor="#000"
-				buttonTextColor="#fff"
+				buttonLink="/products"
 			/>
 			<Featured />
 		</>

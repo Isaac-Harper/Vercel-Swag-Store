@@ -1,10 +1,11 @@
+'use client'
+
 import Link from 'next/link'
 import { CartBag } from '@/components/CartBag'
-import { cartItems } from '@/data/cart'
-
-const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
+import { useCartCount } from '@/components/CartCountProvider'
 
 export function Header() {
+	const { count } = useCartCount()
 	return (
 		<header className="p-4">
 			<nav className="flex items-center gap-4 sm:gap-8">
@@ -34,7 +35,7 @@ export function Header() {
 					Search
 				</Link>
 				<Link href="/cart" className="ml-auto flex items-center gap-2 group">
-					<CartBag itemCount={itemCount} />
+					<CartBag itemCount={count} />
 					Cart
 				</Link>
 			</nav>
