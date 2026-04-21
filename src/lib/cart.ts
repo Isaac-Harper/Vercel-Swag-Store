@@ -1,4 +1,3 @@
-import 'server-only'
 import { cookies } from 'next/headers'
 import { products, type Product } from '@/data/products'
 

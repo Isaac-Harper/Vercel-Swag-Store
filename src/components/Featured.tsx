@@ -17,7 +17,7 @@ export function Featured() {
 				</div>
 				<ul className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
 					{products.map((product) => (
-						<Card key={product.name} {...product} />
+						<Card key={product.slug} {...product} />
 					))}
 				</ul>
 			</div>

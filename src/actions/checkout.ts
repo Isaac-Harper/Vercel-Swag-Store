@@ -49,7 +49,6 @@ const checkoutSchema = z.object({
 
 export type CheckoutState = {
 	ok: boolean
-	errors?: Record<string, string[]>
 	formError?: string
 }
 
@@ -66,7 +65,7 @@ export async function submitCheckout(
 	if (!result.success) {
 		return {
 			ok: false,
-			errors: z.flattenError(result.error).fieldErrors,
+			formError: 'Please check the highlighted fields and try again.',
 		}
 	}
 
@@ -81,13 +80,8 @@ export async function submitCheckout(
 		}
 	}
 
-	// TODO: persist order, charge card, etc.
-	// For now we just acknowledge the items + buyer info and clear the cart.
-	const lineSummary = items
-		.map((i) => `${i.quantity}× ${i.product.slug}`)
-		.join(', ')
-	console.log('[checkout] order placed:', { buyer: result.data.email, items: lineSummary })
-
+	// TODO: persist order to DB, charge card via payment processor, send email.
+	// For now we just clear the cart on a successful "charge".
 	await clearCart()
 	revalidatePath('/', 'layout')
 

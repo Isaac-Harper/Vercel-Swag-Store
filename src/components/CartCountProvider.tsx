@@ -4,6 +4,7 @@ import {
 	createContext,
 	useCallback,
 	useContext,
+	useMemo,
 	useOptimistic,
 	type ReactNode,
 } from 'react'
@@ -34,11 +35,9 @@ export function CartCountProvider({
 		[addOptimisticInternal],
 	)
 
-	return (
-		<CartCountContext.Provider value={{ count, addOptimistic }}>
-			{children}
-		</CartCountContext.Provider>
-	)
+	const value = useMemo(() => ({ count, addOptimistic }), [count, addOptimistic])
+
+	return <CartCountContext.Provider value={value}>{children}</CartCountContext.Provider>
 }
 
 export function useCartCount() {

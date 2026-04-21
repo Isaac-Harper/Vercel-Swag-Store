@@ -9,10 +9,7 @@ import type { CartItem } from '@/lib/cart'
 type View = 'cart' | 'checkout'
 
 export function CartDrawer({ items }: { items: CartItem[] }) {
-	const subtotal = items.reduce(
-		(sum, item) => sum + item.product.price * item.quantity,
-		0,
-	)
+	const subtotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
 	const router = useRouter()
 	const dialogRef = useRef<HTMLDialogElement>(null)
 	const [view, setView] = useState<View>('cart')
@@ -46,6 +43,7 @@ export function CartDrawer({ items }: { items: CartItem[] }) {
 		<dialog
 			ref={dialogRef}
 			onClose={close}
+			// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
 			onClick={handleBackdropClick}
 			className="m-0 ml-auto h-dvh max-h-none w-full max-w-md bg-white text-black shadow-xl backdrop:bg-black/40"
 		>

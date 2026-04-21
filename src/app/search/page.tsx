@@ -1,5 +1,17 @@
+import type { Metadata } from 'next'
 import { Card } from '@/components/Card'
 import { products } from '@/data/products'
+
+export const metadata: Metadata = {
+	title: 'Search',
+	description: 'Browse all Vercel swag products.',
+	alternates: { canonical: '/search' },
+	openGraph: {
+		title: 'Search',
+		description: 'Browse all Vercel swag products.',
+		url: '/search',
+	},
+}
 
 export default async function SearchPage({
 	searchParams,
@@ -28,7 +40,7 @@ export default async function SearchPage({
 				) : (
 					<ul className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
 						{results.map((product) => (
-							<Card key={product.name} {...product} />
+							<Card key={product.slug} {...product} />
 						))}
 					</ul>
 				)}

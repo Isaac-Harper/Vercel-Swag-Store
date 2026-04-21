@@ -3,6 +3,12 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
 	title: 'Page not found',
+	description: 'The page you were looking for could not be found.',
+	robots: { index: false, follow: false },
+	openGraph: {
+		title: 'Page not found',
+		description: 'The page you were looking for could not be found.',
+	},
 }
 
 export default function NotFound() {

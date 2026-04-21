@@ -1,5 +1,18 @@
+import type { Metadata } from 'next'
 import { CartPageInner } from '@/components/CartPageInner'
 import { getCartItems } from '@/lib/cart'
+
+export const metadata: Metadata = {
+	title: 'Cart',
+	description: 'Review the items in your cart and continue to checkout.',
+	alternates: { canonical: '/cart' },
+	robots: { index: false, follow: false },
+	openGraph: {
+		title: 'Cart',
+		description: 'Review the items in your cart and continue to checkout.',
+		url: '/cart',
+	},
+}
 
 export default async function CartPage() {
 	const items = await getCartItems()

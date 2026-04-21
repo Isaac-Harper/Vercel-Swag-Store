@@ -10,11 +10,38 @@ import { getCartCount } from '@/lib/cart'
 
 import './globals.css'
 
+const SITE_NAME = 'Vercel Swag Store'
+const SITE_DESCRIPTION =
+	'Premium swag for developers who build with Vercel. From tees to tech gear, represent the tools you love.'
+const SITE_URL =
+	process.env.NEXT_PUBLIC_SITE_URL ?? 'https://vercel-swag-store.vercel.app'
+
 export const metadata: Metadata = {
-	title: 'Monogram Next.js Starter Kit',
-	description: 'Monogram Next.js Starter Kit',
+	metadataBase: new URL(SITE_URL),
+	title: {
+		default: SITE_NAME,
+		template: `%s — ${SITE_NAME}`,
+	},
+	description: SITE_DESCRIPTION,
 	icons: {
 		icon: '/favicon.svg',
+	},
+	openGraph: {
+		type: 'website',
+		siteName: SITE_NAME,
+		title: SITE_NAME,
+		description: SITE_DESCRIPTION,
+		url: '/',
+		locale: 'en_US',
+	},
+	twitter: {
+		card: 'summary_large_image',
+		title: SITE_NAME,
+		description: SITE_DESCRIPTION,
+	},
+	robots: {
+		index: true,
+		follow: true,
 	},
 }
 
