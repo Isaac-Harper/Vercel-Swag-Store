@@ -1,36 +1,10 @@
 import Link from 'next/link'
 import { Card } from '@/components/Card'
-
-const products = [
-	{
-		name: 'Vercel Tee',
-		price: 29,
-		color: '#000000',
-		href: '/products/vercel-tee',
-	},
-	{
-		name: 'Next.js Hoodie',
-		price: 69,
-		color: '#111827',
-		href: '/products/nextjs-hoodie',
-	},
-	{
-		name: 'Triangle Cap',
-		price: 24,
-		color: '#1f2937',
-		href: '/products/triangle-cap',
-	},
-	{
-		name: 'Edge Mug',
-		price: 18,
-		color: '#374151',
-		href: '/products/edge-mug',
-	},
-]
+import { products } from '@/data/products'
 
 export function Featured() {
 	return (
-		<section className="px-4 py-16 bg-white text-black">
+		<section className="px-4 py-16">
 			<div className="mx-auto max-w-6xl">
 				<div className="mb-8 flex items-baseline justify-between gap-4">
 					<h2 className="text-2xl sm:text-3xl font-bold">Featured Products</h2>

@@ -3,7 +3,7 @@ import { CartBag } from '@/components/CartBag'
 
 export function Header() {
 	return (
-		<header className="bg-white text-black p-4">
+		<header className="p-4">
 			<nav className="flex items-center gap-4 sm:gap-8">
 				<Link href="/" className="flex items-center gap-2 font-bold whitespace-nowrap">
 					<svg
