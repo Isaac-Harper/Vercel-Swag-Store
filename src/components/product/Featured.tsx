@@ -1,14 +1,15 @@
 import Link from 'next/link'
-import { Suspense } from 'react'
 import { Card } from '@/components/product/Card'
 import { EagerPrefetch } from '@/components/ui/EagerPrefetch'
-import { StockBadge } from '@/components/product/StockBadge'
-import { listProducts } from '@/lib/api/products'
+import { getProductStockCached, listProducts } from '@/lib/api/products'
 
 const PRIORITY_COUNT = 2
 
 export async function Featured() {
 	const products = await listProducts({ featured: true })
+	// Resolve stock before rendering so cards paint with their badges in place
+	// rather than having "Only N left" / "Out of stock" pop in after first paint.
+	const stocks = await Promise.all(products.map((p) => getProductStockCached(p.id)))
 	return (
 		<section className="px-4 py-16">
 			<div className="mx-auto max-w-6xl">
@@ -27,11 +28,7 @@ export async function Featured() {
 							key={product.slug}
 							{...product}
 							priority={i < PRIORITY_COUNT}
-							stockBadge={
-								<Suspense fallback={null}>
-									<StockBadge productId={product.id} />
-								</Suspense>
-							}
+							stock={stocks[i]?.stock}
 						/>
 					))}
 				</ul>

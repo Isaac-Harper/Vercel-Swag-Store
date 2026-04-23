@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { Featured } from '@/components/product/Featured'
+import { FeaturedSkeleton } from '@/components/product/FeaturedSkeleton'
 import { Hero } from '@/components/Hero'
 import { JsonLd } from '@/components/ui/JsonLd'
 import { getStoreConfig } from '@/lib/api/store'
@@ -59,7 +61,9 @@ export default async function Home() {
 				buttonText="Browse all Products"
 				buttonLink="/products"
 			/>
-			<Featured />
+			<Suspense fallback={<FeaturedSkeleton />}>
+				<Featured />
+			</Suspense>
 		</>
 	)
 }

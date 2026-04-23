@@ -91,32 +91,36 @@ export async function submitCheckout(
 		}
 	}
 
-	const result = await createOrder({
-		email: parsed.data.email,
-		shipping: {
-			givenName: parsed.data['given-name'],
-			familyName: parsed.data['family-name'],
-			addressLine1: parsed.data['address-line1'],
-			addressLine2: parsed.data['address-line2'],
-			city: parsed.data['address-level2'],
-			state: parsed.data['address-level1'],
-			postalCode: parsed.data['postal-code'],
-			country: parsed.data.country,
-			phone: parsed.data.tel || undefined,
-		},
-		payment: {
-			cardNumber: parsed.data['cc-number'],
-			cardholderName: parsed.data['cc-name'],
-			expiry: parsed.data['cc-exp'],
-			cvc: parsed.data['cc-csc'],
-		},
-	})
+	// Place the order and capture the cart token in parallel — the token is
+	// only needed for cache invalidation after `clearCart` drops the cookie.
+	const [result, oldToken] = await Promise.all([
+		createOrder({
+			email: parsed.data.email,
+			shipping: {
+				givenName: parsed.data['given-name'],
+				familyName: parsed.data['family-name'],
+				addressLine1: parsed.data['address-line1'],
+				addressLine2: parsed.data['address-line2'],
+				city: parsed.data['address-level2'],
+				state: parsed.data['address-level1'],
+				postalCode: parsed.data['postal-code'],
+				country: parsed.data.country,
+				phone: parsed.data.tel || undefined,
+			},
+			payment: {
+				cardNumber: parsed.data['cc-number'],
+				cardholderName: parsed.data['cc-name'],
+				expiry: parsed.data['cc-exp'],
+				cvc: parsed.data['cc-csc'],
+			},
+		}),
+		getCartToken(),
+	])
 
 	if (result.status === 'declined') {
 		return { ok: false, formError: result.reason }
 	}
 
-	const oldToken = await getCartToken()
 	await clearCart()
 	if (oldToken) updateTag(cartCacheTag(oldToken))
 	revalidatePath('/', 'layout')

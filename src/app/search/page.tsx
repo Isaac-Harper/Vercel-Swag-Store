@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 export default async function SearchPage({
 	searchParams,
 }: {
-	searchParams: Promise<{ q?: string; category?: string }>
+	searchParams: Promise<{ q?: string; category?: string; page?: string }>
 }) {
 	const categories = await listCategories()
 

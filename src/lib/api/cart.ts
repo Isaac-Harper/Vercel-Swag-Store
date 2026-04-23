@@ -155,10 +155,11 @@ export async function getCartWithStock(): Promise<CartItem[]> {
 export async function addToCart(slug: string, quantity: number): Promise<void> {
 	if (quantity <= 0) return
 	// Backend's POST /cart accepts productId. Our slug-based actions hand us a
-	// slug — look up the product to get its id.
-	const product = await getProduct(slug)
+	// slug — look up the product to get its id. Parallel with `ensureToken` since
+	// the two are independent (worst case: an invalid slug spawned a fresh cart
+	// for an existing user — minor cost vs. the saved round-trip).
+	const [product, token] = await Promise.all([getProduct(slug), ensureToken()])
 	if (!product) return
-	const token = await ensureToken()
 	const body: AddToCartRequest = { productId: product.id, quantity }
 	await apiFetch('/cart', {
 		method: 'POST',

@@ -80,6 +80,30 @@ export async function listProducts(opts: ListProductsOptions = {}): Promise<Prod
 	return apiListResponseSchema.parse(raw).data
 }
 
+/**
+ * Same as `listProducts` but also returns pagination metadata. Use when the
+ * caller needs `totalPages` / `hasNextPage` for paging UI.
+ */
+export async function listProductsPaginated(
+	opts: ListProductsOptions = {},
+): Promise<{ data: Product[]; pagination: PaginationMeta }> {
+	'use cache'
+
+	cacheLife('hours')
+
+	const raw = await apiFetch<unknown>('/products', {
+		params: {
+			page: opts.page,
+			limit: opts.limit,
+			category: opts.category,
+			search: opts.q,
+			featured: opts.featured,
+		},
+	})
+	const parsed = apiListResponseSchema.parse(raw)
+	return { data: parsed.data, pagination: parsed.meta.pagination }
+}
+
 export async function getProduct(slug: string): Promise<Product | null> {
 	'use cache'
 
