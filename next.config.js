@@ -37,9 +37,23 @@ const nextConfig = {
 				key: 'Permissions-Policy',
 				value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
 			},
+			// Advertise the sitemap to crawlers/agents that look at HTTP Link
+			// headers (RFC 8288) instead of (or in addition to) parsing robots.txt.
+			{ key: 'Link', value: '</sitemap.xml>; rel="sitemap"' },
 		]
 
-		return [{ source: '/:path*', headers: securityHeaders }]
+		const headers = [{ source: '/:path*', headers: securityHeaders }]
+
+		// Block search engines from indexing preview / development deployments.
+		// Production keeps the default (indexable) behavior.
+		if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== 'production') {
+			headers.push({
+				source: '/:path*',
+				headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
+			})
+		}
+
+		return headers
 	},
 }
 

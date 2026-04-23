@@ -64,8 +64,9 @@ body {
 	border-radius: 0.25rem;
 	border: 1px solid rgb(209 213 219);
 	padding: 0.5rem 0.75rem;
-	font-size: 0.875rem;
-	line-height: 1.25rem;
+	/* 16px floor — anything smaller triggers iOS Safari to zoom in on focus. */
+	font-size: 1rem;
+	line-height: 1.5rem;
 }
 
 .form-input:focus {
