@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { z } from 'zod'
+import { LinkPending } from '@/components/ui/LinkPending'
 
 const heroSchema = z.object({
 	heading: z.string(),
@@ -19,9 +20,10 @@ export function Hero(props: HeroProps) {
 			<p className="text-lg">{subheading}</p>
 			<Link
 				href={buttonLink}
-				className="mt-2 cursor-pointer rounded bg-black px-6 py-3 text-sm font-medium text-white transition hover:opacity-80 active:opacity-60"
+				className="relative mt-2 cursor-pointer rounded bg-black px-6 py-3 text-sm font-medium text-white transition hover:opacity-80 active:opacity-60"
 			>
 				{buttonText}
+				<LinkPending />
 			</Link>
 		</section>
 	)

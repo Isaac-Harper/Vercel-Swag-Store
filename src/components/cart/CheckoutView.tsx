@@ -1,6 +1,7 @@
 'use client'
 
 import {
+	startTransition,
 	useActionState,
 	useEffect,
 	useRef,
@@ -111,7 +112,12 @@ export function CheckoutView({
 		e.preventDefault()
 		if (submittingRef.current || pending) return
 		submittingRef.current = true
-		formAction(new FormData(e.currentTarget))
+		// `formAction` from useActionState must run inside a transition so React
+		// can track `pending`. We can't use `<form action={formAction}>` directly
+		// because we still need the synchronous `submittingRef` dedupe to win
+		// over rapid double-clicks before `pending` flips on the next render.
+		const formData = new FormData(e.currentTarget)
+		startTransition(() => formAction(formData))
 	}
 
 	if (state.ok) {

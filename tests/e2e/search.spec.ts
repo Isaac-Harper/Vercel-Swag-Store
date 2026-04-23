@@ -24,20 +24,29 @@ test.describe('Search', () => {
 		const href = await firstCard.getAttribute('href')
 		if (!href) throw new Error('product card had no href')
 
-		await Promise.all([page.waitForURL(new RegExp(`${href}$`)), firstCard.click()])
+		// `force: true` because the `<Image fill>` sits absolutely on top of the
+		// `<Link>`, and WebKit's hit-test reports the image as the topmost
+		// element. The click still navigates (the image is inside the link), but
+		// Playwright's actionability check rejects it without `force`.
+		await Promise.all([
+			page.waitForURL(new RegExp(`${href}$`)),
+			firstCard.click({ force: true }),
+		])
 		await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
 	})
 
 	test('submitting a query updates the URL', async ({ page }) => {
 		await page.goto('/search')
 
-		// Wait for the real form to mount (Submit button replaces the skeleton).
-		await expect(page.getByRole('button', { name: /^search$/i })).toBeVisible()
+		const submitBtn = page.getByRole('button', { name: /^search$/i })
+		await expect(submitBtn).toBeVisible()
 
 		const input = page.getByPlaceholder(/search products/i)
-		await input.fill('shirt')
-		// Explicit Enter-to-submit. Avoids relying on the 300ms auto-search
-		// debounce, which can race the React transition under WebKit.
+		// `pressSequentially` types real keystrokes — `fill` in WebKit sometimes
+		// sets the DOM value without triggering React's synthetic `onChange`, so
+		// the component's `q` state stays empty and submit pushes `/search` with
+		// no query string. Submit via Enter for the same WebKit-click reason.
+		await input.pressSequentially('shirt')
 		await Promise.all([page.waitForURL(/[?&]q=shirt/), input.press('Enter')])
 	})
 })

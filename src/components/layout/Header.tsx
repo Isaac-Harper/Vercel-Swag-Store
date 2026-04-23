@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import type { ReactNode } from 'react'
+import { CartLinkPending } from '@/components/cart/CartLinkPending'
 
 export function Header({ cartBadge }: { cartBadge: ReactNode }) {
 	const pathname = usePathname()
@@ -51,6 +52,7 @@ export function Header({ cartBadge }: { cartBadge: ReactNode }) {
 				>
 					{cartBadge}
 					Cart
+					<CartLinkPending />
 				</Link>
 			</nav>
 		</header>

@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { LinkPending } from '@/components/ui/LinkPending'
 import { formatPrice } from '@/lib/format'
 import {
 	PRODUCT_PLACEHOLDER_BLUR,
@@ -32,8 +33,9 @@ export function Card({ slug, name, price, images, priority, stock }: CardProps) 
 		<li>
 			<Link
 				href={`/products/${slug}`}
-				className={`flex flex-col gap-3 group ${outOfStock ? 'opacity-60' : ''}`}
+				className={`relative flex flex-col gap-3 group ${outOfStock ? 'opacity-60' : ''}`}
 			>
+				<LinkPending />
 				<div className="relative w-full pb-[100%]">
 					<Image
 						src={image}

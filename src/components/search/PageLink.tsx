@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { AriaAttributes, ReactNode } from 'react'
-import { LinkPending } from '@/components/search/LinkPending'
+import { LinkPending } from '@/components/ui/LinkPending'
 
 type Props = {
 	href: string

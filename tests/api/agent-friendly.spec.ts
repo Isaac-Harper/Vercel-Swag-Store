@@ -56,4 +56,28 @@ test.describe('Agent-friendly endpoints', () => {
 		expect(link).toContain('rel="sitemap"')
 		expect(link).toContain('/sitemap.xml')
 	})
+
+	test('homepage Link header advertises the markdown alternate', async ({ request }) => {
+		const res = await request.get('/')
+		const link = res.headers().link ?? ''
+		expect(link).toContain('</md>')
+		expect(link).toContain('rel="alternate"')
+		expect(link).toContain('type="text/markdown"')
+		expect(res.headers().vary ?? '').toMatch(/Accept/i)
+	})
+
+	test('product detail Link header points to its markdown alternate', async ({
+		request,
+	}) => {
+		const home = await request.get('/')
+		const html = await home.text()
+		const slug = html.match(/href="\/products\/([\w-]+)"/)?.[1]
+		test.skip(!slug, 'no product slugs found on homepage')
+
+		const res = await request.get(`/products/${slug}`)
+		const link = res.headers().link ?? ''
+		expect(link).toContain(`</md/products/${slug}>`)
+		expect(link).toContain('rel="alternate"')
+		expect(link).toContain('type="text/markdown"')
+	})
 })

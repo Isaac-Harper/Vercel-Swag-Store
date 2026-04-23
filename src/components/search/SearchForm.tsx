@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
 	useEffect,
 	useRef,
@@ -16,6 +16,7 @@ const AUTO_SEARCH_MIN_CHARS = 3
 
 export function SearchForm({ categories }: { categories: Category[] }) {
 	const router = useRouter()
+	const pathname = usePathname()
 	const params = useSearchParams()
 	const [q, setQ] = useState(params.get('q') ?? '')
 	const [category, setCategory] = useState(params.get('category') ?? '')
@@ -29,12 +30,19 @@ export function SearchForm({ categories }: { categories: Category[] }) {
 		[],
 	)
 
+	// Clones the current URL params and mutates only `q` / `category`, so
+	// unrelated filters added later (e.g. `sort`) survive the navigation.
+	// Always drops `page` — changing query or category invalidates the page
+	// number (we'd land on a `?page=4` that doesn't exist for the new filter).
 	function buildUrl(nextQ: string, nextCategory: string) {
-		const next = new URLSearchParams()
+		const next = new URLSearchParams(params.toString())
 		if (nextQ) next.set('q', nextQ)
+		else next.delete('q')
 		if (nextCategory) next.set('category', nextCategory)
+		else next.delete('category')
+		next.delete('page')
 		const qs = next.toString()
-		return qs ? `/search?${qs}` : '/search'
+		return qs ? `${pathname}?${qs}` : pathname
 	}
 
 	function pushQuery(nextQ: string, nextCategory: string) {

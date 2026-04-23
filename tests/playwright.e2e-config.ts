@@ -15,8 +15,10 @@ export default defineConfig({
 	expect: { timeout: 5_000 },
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
-	retries: process.env.CI ? 2 : 0,
-	workers: process.env.CI ? 1 : undefined,
+	retries: process.env.CI ? 2 : 1,
+	// Cap workers so the single dev server + remote API don't get hammered by
+	// every browser project at once (causes ECONNRESET / connection refused).
+	workers: process.env.CI ? 1 : 2,
 	reporter: 'html',
 	use: {
 		baseURL: BASE_URL,

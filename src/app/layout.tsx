@@ -64,7 +64,13 @@ export default function RootLayout({
 	modal: ReactNode
 }) {
 	return (
-		<html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
+		<html
+			lang="en"
+			// `data-scroll-behavior` lets Next.js disable the CSS smooth scroll
+			// during route transitions (otherwise back/forward jumps animate).
+			data-scroll-behavior="smooth"
+			className={`${GeistSans.variable} ${GeistMono.variable}`}
+		>
 			<body>
 				<a
 					href="#main-content"

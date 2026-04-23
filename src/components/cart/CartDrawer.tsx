@@ -12,6 +12,13 @@ export function CartDrawer({ itemsPromise }: { itemsPromise: Promise<CartItem[]>
 	const [view, setView] = useState<CartViewMode>('cart')
 
 	const close = useCallback(() => {
+		// Reset view BEFORE navigating away. If Next.js's router cache keeps
+		// this drawer tree alive across open/close, the next open lands on
+		// `<CartView>` and `<CheckoutView>` is unmounted — discarding any
+		// stale `state.ok` from a previous successful order. (If the tree is
+		// fully unmounted instead, this is a harmless no-op since `useState`
+		// re-initializes to `'cart'` anyway.)
+		setView('cart')
 		router.back()
 	}, [router])
 

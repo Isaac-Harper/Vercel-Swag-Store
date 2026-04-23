@@ -44,6 +44,33 @@ const nextConfig = {
 
 		const headers = [{ source: '/:path*', headers: securityHeaders }]
 
+		// Per-route Link headers advertising the markdown alternate of each
+		// agent-facing page (RFC 8288 + RFC 6249-style content negotiation hint).
+		// Browsers ignore these; AI crawlers / SDKs that resolve `rel="alternate"
+		// type=text/markdown" can fetch the cleaner text version directly.
+		// `Vary: Accept` keeps shared caches from serving HTML for the markdown
+		// request and vice-versa.
+		const markdownAlternates = [
+			{ source: '/', md: '/md' },
+			{ source: '/search', md: '/md/search' },
+			{ source: '/products/:slug', md: '/md/products/:slug' },
+		]
+		// Next.js overwrites same-key headers when multiple `source` rules match,
+		// so the wildcard sitemap Link above gets replaced on these routes. Merge
+		// both link-values into a single comma-separated Link header here.
+		for (const { source, md } of markdownAlternates) {
+			headers.push({
+				source,
+				headers: [
+					{
+						key: 'Link',
+						value: `<${md}>; rel="alternate"; type="text/markdown", </sitemap.xml>; rel="sitemap"`,
+					},
+					{ key: 'Vary', value: 'Accept' },
+				],
+			})
+		}
+
 		// Block search engines from indexing preview / development deployments.
 		// Production keeps the default (indexable) behavior.
 		if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== 'production') {
