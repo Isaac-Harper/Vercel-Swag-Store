@@ -1,7 +1,7 @@
 import { Card } from '@/components/product/Card'
 import { Pagination } from '@/components/search/Pagination'
 import { EagerPrefetch } from '@/components/ui/EagerPrefetch'
-import { getProductStockCached, listProductsPaginated } from '@/lib/api/products'
+import { getProductStockForListing, listProductsPaginated } from '@/lib/api/products'
 
 const PAGE_SIZE = 5
 
@@ -29,7 +29,7 @@ export async function SearchResults({
 	}
 
 	// Resolve stock before rendering to avoid badges popping in after first paint.
-	const stocks = await Promise.all(results.map((p) => getProductStockCached(p.id)))
+	const stocks = await Promise.all(results.map((p) => getProductStockForListing(p.id)))
 
 	const start = (page - 1) * PAGE_SIZE + 1
 	const end = start + results.length - 1

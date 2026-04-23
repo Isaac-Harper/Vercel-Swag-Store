@@ -145,3 +145,18 @@ export async function getProductStockCached(slugOrId: string): Promise<StockInfo
 	cacheLife({ stale: 5, revalidate: 5, expire: 30 })
 	return getProductStock(slugOrId)
 }
+
+/**
+ * Longer-cached stock lookup (~minutes) for listing pages (Featured, Search).
+ * Stock displayed on a card doesn't need cart-grade freshness — a few minutes
+ * of staleness is acceptable in exchange for instant repeat-visit renders.
+ * The cart and checkout still use the short-cache / uncached variants.
+ */
+export async function getProductStockForListing(
+	slugOrId: string,
+): Promise<StockInfo | null> {
+	'use cache'
+
+	cacheLife('minutes')
+	return getProductStock(slugOrId)
+}
