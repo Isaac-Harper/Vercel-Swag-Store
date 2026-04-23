@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
-import type { ReactNode } from 'react'
+import { Suspense, type ReactNode } from 'react'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
-import { CartCountBoundary } from '@/components/cart/CartCountBoundary'
+import { CartBadgeAsync } from '@/components/cart/CartBadgeAsync'
+import { CartBag } from '@/components/cart/CartBag'
+import { CartCountProvider } from '@/components/cart/CartCountProvider'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { Promo } from '@/components/layout/Promo'
@@ -63,10 +65,6 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
-			{/* Empty <head> intentionally — Next needs an explicit head element
-			    to hoist metadata into; without it, <meta name="description"> ends
-			    up inside <body> and Lighthouse counts it as missing. */}
-			<head />
 			<body>
 				<a
 					href="#main-content"
@@ -74,15 +72,21 @@ export default function RootLayout({
 				>
 					Skip to content
 				</a>
-				<CartCountBoundary>
-					<Header />
+				<CartCountProvider>
+					<Header
+						cartBadge={
+							<Suspense fallback={<CartBag itemCount={0} />}>
+								<CartBadgeAsync />
+							</Suspense>
+						}
+					/>
 					<Promo />
 					<main id="main-content" className="flex-1">
 						{children}
 					</main>
 					{modal}
 					<Footer />
-				</CartCountBoundary>
+				</CartCountProvider>
 			</body>
 		</html>
 	)

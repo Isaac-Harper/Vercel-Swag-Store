@@ -1,11 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/format'
-
-// Tiny neutral-gray SVG used as a blur placeholder so cached images fade in
-// instead of flashing through an empty frame on re-render.
-const BLUR_DATA_URL =
-	'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiUyM2U1ZTdlYiIvPjwvc3ZnPg=='
+import {
+	PRODUCT_PLACEHOLDER_BLUR,
+	PRODUCT_PLACEHOLDER_SRC,
+} from '@/lib/image-placeholder'
 
 type CardProps = {
 	slug: string
@@ -26,7 +25,7 @@ type CardProps = {
 }
 
 export function Card({ slug, name, price, images, priority, stock }: CardProps) {
-	const image = images[0] ?? '/product-placeholder.svg'
+	const image = images[0] ?? PRODUCT_PLACEHOLDER_SRC
 	const outOfStock = stock === 0
 	const lowStock = stock !== undefined && stock > 0 && stock <= 5
 	return (
@@ -42,7 +41,7 @@ export function Card({ slug, name, price, images, priority, stock }: CardProps) 
 						fill
 						priority={priority}
 						placeholder="blur"
-						blurDataURL={BLUR_DATA_URL}
+						blurDataURL={PRODUCT_PLACEHOLDER_BLUR}
 						sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
 						className={`rounded object-cover ${outOfStock ? 'grayscale' : ''}`}
 					/>

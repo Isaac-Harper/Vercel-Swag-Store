@@ -7,6 +7,10 @@ import { ProductStockAndCart } from '@/components/product/ProductStockAndCart'
 import { ProductStockAndCartSkeleton } from '@/components/product/ProductStockAndCartSkeleton'
 import { getProduct, listProducts } from '@/lib/api/products'
 import { formatPrice } from '@/lib/format'
+import {
+	PRODUCT_PLACEHOLDER_BLUR,
+	PRODUCT_PLACEHOLDER_SRC,
+} from '@/lib/image-placeholder'
 
 const SITE_URL =
 	process.env.NEXT_PUBLIC_SITE_URL ?? 'https://vercel-swag-store.vercel.app'
@@ -48,7 +52,7 @@ export default async function ProductDetailPage({
 	if (!product) notFound()
 
 	const productUrl = `${SITE_URL}/products/${product.slug}`
-	const image = product.images[0] ?? '/product-placeholder.svg'
+	const image = product.images[0] ?? PRODUCT_PLACEHOLDER_SRC
 	const jsonLd = {
 		'@context': 'https://schema.org',
 		'@type': 'Product',
@@ -79,7 +83,7 @@ export default async function ProductDetailPage({
 							sizes="(min-width: 768px) 50vw, 100vw"
 							priority
 							placeholder="blur"
-							blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiUyM2U1ZTdlYiIvPjwvc3ZnPg=="
+							blurDataURL={PRODUCT_PLACEHOLDER_BLUR}
 							className="rounded object-cover"
 						/>
 					</div>

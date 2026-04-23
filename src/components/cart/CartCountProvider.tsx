@@ -10,21 +10,21 @@ import {
 } from 'react'
 
 type CartCountContextValue = {
-	count: number
+	/**
+	 * Sum of pending optimistic adjustments not yet reflected in the
+	 * server-rendered count. Resets to 0 once the surrounding transition
+	 * (typically a server-action form submission) completes and revalidation
+	 * delivers a fresh server count to `<CartBadge>`.
+	 */
+	delta: number
 	addOptimistic: (amount: number) => void
 }
 
 const CartCountContext = createContext<CartCountContextValue | null>(null)
 
-export function CartCountProvider({
-	initialCount,
-	children,
-}: {
-	initialCount: number
-	children: ReactNode
-}) {
-	const [count, addOptimisticInternal] = useOptimistic(
-		initialCount,
+export function CartCountProvider({ children }: { children: ReactNode }) {
+	const [delta, addOptimisticInternal] = useOptimistic(
+		0,
 		(state: number, amount: number) => state + amount,
 	)
 
@@ -35,7 +35,7 @@ export function CartCountProvider({
 		[addOptimisticInternal],
 	)
 
-	const value = useMemo(() => ({ count, addOptimistic }), [count, addOptimistic])
+	const value = useMemo(() => ({ delta, addOptimistic }), [delta, addOptimistic])
 
 	return <CartCountContext.Provider value={value}>{children}</CartCountContext.Provider>
 }

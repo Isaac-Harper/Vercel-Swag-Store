@@ -44,10 +44,8 @@ export async function apiFetch<T>(path: string, options: FetchOptions = {}): Pro
 	// TODO: retry on 5xx with exponential backoff
 	// TODO: report errors to telemetry
 	const { params, headers, ...init } = options
-	const url = new URL(
-		`${API_URL}${path}`,
-		typeof window === 'undefined' ? 'http://localhost' : window.location.origin,
-	)
+	// `apiFetch` is server-only — `API_URL` is always absolute, so no base needed.
+	const url = new URL(`${API_URL}${path}`)
 	if (params) {
 		for (const [k, v] of Object.entries(params)) {
 			if (v !== undefined && v !== null) url.searchParams.set(k, String(v))

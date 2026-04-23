@@ -2,11 +2,9 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { CartBag } from '@/components/cart/CartBag'
-import { useCartCount } from '@/components/cart/CartCountProvider'
+import type { ReactNode } from 'react'
 
-export function Header() {
-	const { count } = useCartCount()
+export function Header({ cartBadge }: { cartBadge: ReactNode }) {
 	const pathname = usePathname()
 	const onCartPage = pathname === '/cart'
 
@@ -39,19 +37,21 @@ export function Header() {
 				>
 					Search
 				</Link>
-				{!onCartPage && (
-					<Link
-						href="/cart"
-						scroll={false}
-						className="ml-auto flex items-center gap-2 group"
-					>
-						<CartBag itemCount={count} />
-						Cart
-					</Link>
-				)}
-				<span aria-live="polite" className="sr-only">
-					{count} {count === 1 ? 'item' : 'items'} in cart
-				</span>
+				{/* Always render the cart link so server/client HTML matches even
+				    if pathname briefly disagrees during a redirect or transition.
+				    Disable visually + via aria-current when the user is already
+				    on /cart. */}
+				<Link
+					href="/cart"
+					scroll={false}
+					aria-current={onCartPage ? 'page' : undefined}
+					className={`ml-auto flex items-center gap-2 group ${
+						onCartPage ? 'pointer-events-none opacity-60' : ''
+					}`}
+				>
+					{cartBadge}
+					Cart
+				</Link>
 			</nav>
 		</header>
 	)
