@@ -78,6 +78,8 @@ export default async function ProductDetailPage({
 							fill
 							sizes="(min-width: 768px) 50vw, 100vw"
 							priority
+							placeholder="blur"
+							blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiUyM2U1ZTdlYiIvPjwvc3ZnPg=="
 							className="rounded object-cover"
 						/>
 					</div>
