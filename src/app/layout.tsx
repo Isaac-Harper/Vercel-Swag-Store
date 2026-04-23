@@ -63,16 +63,10 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
-			<head>
-				{/* Explicit <head> is required: removing it pushes Next's auto-
-				    generated <meta name="description"> (and other metadata) into
-				    <body>, which Lighthouse counts as missing. */}
-				<link
-					rel="preconnect"
-					href="https://i8qy5y6gxkdgdcv9.public.blob.vercel-storage.com"
-					crossOrigin="anonymous"
-				/>
-			</head>
+			{/* Empty <head> intentionally — Next needs an explicit head element
+			    to hoist metadata into; without it, <meta name="description"> ends
+			    up inside <body> and Lighthouse counts it as missing. */}
+			<head />
 			<body>
 				<a
 					href="#main-content"
