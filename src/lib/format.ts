@@ -3,6 +3,7 @@ const priceFormatter = new Intl.NumberFormat('en-US', {
 	currency: 'USD',
 })
 
-export function formatPrice(amount: number): string {
-	return priceFormatter.format(amount)
+/** Formats a price given in the smallest currency unit (cents for USD). */
+export function formatPrice(amountInCents: number): string {
+	return priceFormatter.format(amountInCents / 100)
 }

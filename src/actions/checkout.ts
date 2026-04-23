@@ -1,9 +1,12 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, updateTag } from 'next/cache'
 import { z } from 'zod'
+import { cartCacheTag, clearCart, getCart } from '@/lib/api/cart'
+import { createOrder } from '@/lib/api/orders'
+import { getProductStock } from '@/lib/api/products'
+import { getCartToken } from '@/lib/cart'
 import { usStates } from '@/data/usStates'
-import { clearCart, getCartItems } from '@/lib/cart'
 
 const stateNames = usStates.map((s) => s.name)
 
@@ -56,33 +59,66 @@ export async function submitCheckout(
 	_prev: CheckoutState,
 	formData: FormData,
 ): Promise<CheckoutState> {
-	const items = await getCartItems()
+	const items = await getCart()
 	if (items.length === 0) {
 		return { ok: false, formError: 'Your cart is empty.' }
 	}
 
-	const result = checkoutSchema.safeParse(Object.fromEntries(formData))
-	if (!result.success) {
+	const parsed = checkoutSchema.safeParse(Object.fromEntries(formData))
+	if (!parsed.success) {
 		return {
 			ok: false,
 			formError: 'Please check the highlighted fields and try again.',
 		}
 	}
 
-	const digits = result.data['cc-number'].replace(/\s/g, '')
-	const lastDigit = Number(digits.slice(-1))
-	const accepted = lastDigit % 2 === 0
-
-	if (!accepted) {
-		return {
-			ok: false,
-			formError: 'Payment declined. Please try a different card.',
+	// Authoritative stock check before charging — guards against client races and
+	// inventory dropping between the cart view and the order being placed.
+	const stocks = await Promise.all(
+		items.map((item) => getProductStock(item.product.id)),
+	)
+	for (let i = 0; i < items.length; i++) {
+		const item = items[i]
+		const available = stocks[i]?.stock
+		if (available !== undefined && available < item.quantity) {
+			return {
+				ok: false,
+				formError:
+					available === 0
+						? `${item.product.name} is sold out.`
+						: `Only ${available} of ${item.product.name} left — please update your cart.`,
+			}
 		}
 	}
 
-	// TODO: persist order to DB, charge card via payment processor, send email.
-	// For now we just clear the cart on a successful "charge".
+	const result = await createOrder({
+		email: parsed.data.email,
+		shipping: {
+			givenName: parsed.data['given-name'],
+			familyName: parsed.data['family-name'],
+			addressLine1: parsed.data['address-line1'],
+			addressLine2: parsed.data['address-line2'],
+			city: parsed.data['address-level2'],
+			state: parsed.data['address-level1'],
+			postalCode: parsed.data['postal-code'],
+			country: parsed.data.country,
+			phone: parsed.data.tel || undefined,
+		},
+		payment: {
+			cardNumber: parsed.data['cc-number'],
+			cardholderName: parsed.data['cc-name'],
+			expiry: parsed.data['cc-exp'],
+			cvc: parsed.data['cc-csc'],
+		},
+	})
+
+	if (result.status === 'declined') {
+		return { ok: false, formError: result.reason }
+	}
+
+	const oldToken = await getCartToken()
 	await clearCart()
+	if (oldToken) updateTag(cartCacheTag(oldToken))
 	revalidatePath('/', 'layout')
 
 	return { ok: true }

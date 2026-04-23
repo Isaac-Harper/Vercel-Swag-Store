@@ -2,46 +2,56 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
-import { CartCountBoundary } from '@/components/CartCountBoundary'
-import { Header } from '@/components/Header'
-import { Footer } from '@/components/Footer'
-import { Promo } from '@/components/Promo'
+import { CartCountBoundary } from '@/components/cart/CartCountBoundary'
+import { Header } from '@/components/layout/Header'
+import { Footer } from '@/components/layout/Footer'
+import { Promo } from '@/components/layout/Promo'
+import { getStoreConfig } from '@/lib/api/store'
 
 import './globals.css'
 
-const SITE_NAME = 'Vercel Swag Store'
-const SITE_DESCRIPTION =
-	'Premium swag for developers who build with Vercel. From tees to tech gear, represent the tools you love.'
 const SITE_URL =
 	process.env.NEXT_PUBLIC_SITE_URL ?? 'https://vercel-swag-store.vercel.app'
 
-export const metadata: Metadata = {
-	metadataBase: new URL(SITE_URL),
-	title: {
-		default: SITE_NAME,
-		template: `%s — ${SITE_NAME}`,
-	},
-	description: SITE_DESCRIPTION,
-	icons: {
-		icon: '/favicon.svg',
-	},
-	openGraph: {
-		type: 'website',
-		siteName: SITE_NAME,
-		title: SITE_NAME,
-		description: SITE_DESCRIPTION,
-		url: '/',
-		locale: 'en_US',
-	},
-	twitter: {
-		card: 'summary_large_image',
-		title: SITE_NAME,
-		description: SITE_DESCRIPTION,
-	},
-	robots: {
-		index: true,
-		follow: true,
-	},
+function extractTwitterHandle(url?: string): string | undefined {
+	if (!url) return undefined
+	const match = url.match(/(?:twitter|x)\.com\/([^/?#]+)/)
+	return match ? `@${match[1]}` : undefined
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+	const config = await getStoreConfig()
+	const twitterHandle = extractTwitterHandle(config.socialLinks.twitter)
+	return {
+		metadataBase: new URL(SITE_URL),
+		title: {
+			default: config.seo.defaultTitle,
+			template: config.seo.titleTemplate,
+		},
+		description: config.seo.defaultDescription,
+		icons: {
+			icon: '/favicon.svg',
+		},
+		openGraph: {
+			type: 'website',
+			siteName: config.storeName,
+			title: config.seo.defaultTitle,
+			description: config.seo.defaultDescription,
+			url: '/',
+			locale: 'en_US',
+		},
+		twitter: {
+			card: 'summary_large_image',
+			site: twitterHandle,
+			creator: twitterHandle,
+			title: config.seo.defaultTitle,
+			description: config.seo.defaultDescription,
+		},
+		robots: {
+			index: true,
+			follow: true,
+		},
+	}
 }
 
 export default function RootLayout({
@@ -53,6 +63,16 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
+			<head>
+				{/* Explicit <head> is required: removing it pushes Next's auto-
+				    generated <meta name="description"> (and other metadata) into
+				    <body>, which Lighthouse counts as missing. */}
+				<link
+					rel="preconnect"
+					href="https://i8qy5y6gxkdgdcv9.public.blob.vercel-storage.com"
+					crossOrigin="anonymous"
+				/>
+			</head>
 			<body>
 				<a
 					href="#main-content"
