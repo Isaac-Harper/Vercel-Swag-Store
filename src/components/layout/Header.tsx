@@ -43,6 +43,12 @@ export function Header() {
 					<Link
 						href="/cart"
 						scroll={false}
+						// `prefetch={false}` because `/cart` is intercepted by the
+						// `@modal/(.)cart` parallel route — viewport-prefetching the
+						// RSC payload 404s on Vercel (and noisily logs to the
+						// console). The drawer streams its content via Suspense, so
+						// the practical click-to-open delay is negligible.
+						prefetch={false}
 						className="ml-auto flex items-center gap-2 group"
 					>
 						<CartBag itemCount={count} />

@@ -39,21 +39,7 @@ const nextConfig = {
 			},
 		]
 
-		const headers = [{ source: '/:path*', headers: securityHeaders }]
-
-		if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview') {
-			headers.push({
-				headers: [
-					{
-						key: 'X-Robots-Tag',
-						value: 'noindex',
-					},
-				],
-				source: '/:path*',
-			})
-		}
-
-		return headers
+		return [{ source: '/:path*', headers: securityHeaders }]
 	},
 }
 
