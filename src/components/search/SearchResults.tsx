@@ -1,60 +1,24 @@
-import { Card } from '@/components/product/Card'
-import { Pagination } from '@/components/search/Pagination'
-import { EagerPrefetch } from '@/components/ui/EagerPrefetch'
-import { getProductStockForListing, listProductsPaginated } from '@/lib/api/products'
+import { Suspense } from 'react'
+import { SearchResultsList } from '@/components/search/SearchResultsList'
+import { SearchResultsSkeleton } from '@/components/search/SearchResultsSkeleton'
 
-const PAGE_SIZE = 5
-
+/**
+ * Awaits searchParams (must be inside Suspense per Cache Components) and wraps
+ * the actual list in a keyed Suspense so navigating to a different
+ * search/page/category re-shows the skeleton instead of holding stale results
+ * until the new ones resolve.
+ */
 export async function SearchResults({
 	searchParams,
 }: {
 	searchParams: Promise<{ q?: string; category?: string; page?: string }>
 }) {
-	const { q = '', category = '', page: pageRaw = '1' } = await searchParams
-	const page = Math.max(1, Number.parseInt(pageRaw, 10) || 1)
-
-	const { data: results, pagination } = await listProductsPaginated({
-		q: q.trim() || undefined,
-		category: category || undefined,
-		limit: PAGE_SIZE,
-		page,
-	})
-
-	if (results.length === 0) {
-		return (
-			<p className="text-gray-600">
-				No products match {q ? `"${q}"` : 'your filters'}.
-			</p>
-		)
-	}
-
-	// Resolve stock before rendering to avoid badges popping in after first paint.
-	const stocks = await Promise.all(results.map((p) => getProductStockForListing(p.id)))
-
-	const start = (page - 1) * PAGE_SIZE + 1
-	const end = start + results.length - 1
-
-	const baseParams: Record<string, string> = {}
-	if (q) baseParams.q = q
-	if (category) baseParams.category = category
+	const params = await searchParams
+	const key = `${params.q ?? ''}|${params.category ?? ''}|${params.page ?? '1'}`
 
 	return (
-		<>
-			<ul className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
-				{results.map((product, i) => (
-					<Card key={product.slug} {...product} stock={stocks[i]?.stock} />
-				))}
-			</ul>
-			<EagerPrefetch hrefs={results.map((p) => `/products/${p.slug}`)} />
-			<p className="mt-4 text-xs text-gray-500">
-				Showing {start}–{end} of {pagination.total} results.
-			</p>
-			<Pagination
-				pathname="/search"
-				baseParams={baseParams}
-				currentPage={pagination.page}
-				totalPages={pagination.totalPages}
-			/>
-		</>
+		<Suspense key={key} fallback={<SearchResultsSkeleton />}>
+			<SearchResultsList params={params} />
+		</Suspense>
 	)
 }

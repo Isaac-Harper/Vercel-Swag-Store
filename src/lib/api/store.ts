@@ -35,13 +35,14 @@ const apiStoreConfigResponseSchema = z.object({
 
 /**
  * Store-level config (name, currency, SEO defaults, social links, feature flags).
- * Cached aggressively — only changes on backend deploys, so 'hours' lifetime.
- * Bust the cache by redeploying the frontend or via a cacheTag if you wire one in.
+ * Effectively static — only changes on backend deploys. `days` TTL keeps the
+ * value cached well beyond a typical visit; redeploy or wire a cacheTag in to
+ * bust on demand.
  */
 export async function getStoreConfig(): Promise<StoreConfig> {
 	'use cache'
 
-	cacheLife('hours')
+	cacheLife('days')
 
 	const raw = await apiFetch<unknown>('/store/config')
 	const parsed = apiStoreConfigResponseSchema.parse(raw)

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { AriaAttributes, ReactNode } from 'react'
+import { LinkPending } from '@/components/search/LinkPending'
 
 type Props = {
 	href: string
@@ -10,7 +11,7 @@ type Props = {
 
 /** Single link / disabled cell used by `<Pagination>`. */
 export function PageLink({ href, current, disabled, children, ...rest }: Props) {
-	const className = `flex h-9 min-w-9 items-center justify-center rounded border px-3 text-sm transition ${
+	const className = `relative flex h-9 min-w-9 items-center justify-center rounded border px-3 text-sm transition ${
 		current
 			? 'border-black bg-black text-white'
 			: 'border-gray-200 hover:border-gray-400'
@@ -27,6 +28,7 @@ export function PageLink({ href, current, disabled, children, ...rest }: Props) 
 	return (
 		<Link href={href} className={className} {...rest}>
 			{children}
+			<LinkPending />
 		</Link>
 	)
 }

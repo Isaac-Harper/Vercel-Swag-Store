@@ -27,7 +27,9 @@ export async function generateStaticParams() {
 async function fetchAsDataUrl(url: string): Promise<string> {
 	'use cache'
 
-	cacheLife('hours')
+	// Source bytes at a given URL are immutable (the URL changes when the image
+	// is replaced), so a long TTL is safe and saves OG-route regeneration.
+	cacheLife('days')
 
 	const res = await fetch(url)
 	const mime = res.headers.get('content-type') ?? 'image/png'
