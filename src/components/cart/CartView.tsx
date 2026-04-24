@@ -137,6 +137,7 @@ export function CartView({
 											src={image}
 											alt={product.name}
 											fill
+											sizes="80px"
 											className="object-cover"
 										/>
 									</div>
