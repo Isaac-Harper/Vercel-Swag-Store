@@ -96,9 +96,11 @@ type CartSnapshot = {
 /**
  * Cached cart fetch keyed by token. Returns the items + server-computed
  * totals so callers (`getCart`, `getCartCount`, `getCartWithStock`) share a
- * single underlying fetch. Null = backend has no record of the token (404)
- * so the caller can clean the cookie up — we can't write cookies inside
- * `'use cache'`.
+ * single underlying fetch. Null = backend has no record of the token (404);
+ * callers treat that as an empty cart. We don't clear the cookie here — this
+ * path runs during render, where Next.js forbids cookie writes. The stale
+ * cookie is harmless and gets overwritten the next time `createCart` runs
+ * from a mutation.
  */
 async function fetchCartByToken(token: string): Promise<CartSnapshot | null> {
 	'use cache'
@@ -127,11 +129,7 @@ async function getCartSnapshot(): Promise<CartSnapshot> {
 	const token = await getCartToken()
 	if (!token) return empty
 	const snapshot = await fetchCartByToken(token)
-	if (snapshot === null) {
-		await clearCartToken()
-		return empty
-	}
-	return snapshot
+	return snapshot ?? empty
 }
 
 export async function getCart(): Promise<CartItem[]> {
@@ -170,11 +168,24 @@ export async function addToCart(slug: string, quantity: number): Promise<void> {
 	const [product, token] = await Promise.all([getProduct(slug), ensureToken()])
 	if (!product) return
 	const body: AddToCartRequest = { productId: product.id, quantity }
-	await apiFetch('/cart', {
-		method: 'POST',
-		headers: { 'x-cart-token': token },
-		body: JSON.stringify(body),
-	})
+	try {
+		await apiFetch('/cart', {
+			method: 'POST',
+			headers: { 'x-cart-token': token },
+			body: JSON.stringify(body),
+		})
+	} catch (err) {
+		// Cookie pointed at a cart the backend has evicted. Recover by dropping
+		// the stale token, issuing a fresh cart, and retrying once.
+		if (!(err instanceof ApiError) || err.status !== 404) throw err
+		await clearCartToken()
+		const freshToken = await createCart()
+		await apiFetch('/cart', {
+			method: 'POST',
+			headers: { 'x-cart-token': freshToken },
+			body: JSON.stringify(body),
+		})
+	}
 }
 
 export async function updateCartItem(productId: string, quantity: number): Promise<void> {
