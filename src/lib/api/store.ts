@@ -6,6 +6,10 @@ import { apiFetch } from '@/lib/api/client'
 import type { StoreConfigResponse } from '@/types/api'
 import type { StoreConfig } from '@/types/store'
 
+const socialLinkUrlSchema = z
+	.string()
+	.refine((v) => /^https?:\/\//i.test(v), 'social link must be http(s)')
+
 const apiStoreConfigSchema = z.object({
 	storeName: z.string(),
 	currency: z.string(),
@@ -18,11 +22,11 @@ const apiStoreConfigSchema = z.object({
 	}),
 	socialLinks: z
 		.object({
-			twitter: z.string().optional(),
-			github: z.string().optional(),
-			discord: z.string().optional(),
+			twitter: socialLinkUrlSchema.optional(),
+			github: socialLinkUrlSchema.optional(),
+			discord: socialLinkUrlSchema.optional(),
 		})
-		.catchall(z.string()),
+		.catchall(socialLinkUrlSchema),
 	seo: z.object({
 		defaultTitle: z.string(),
 		titleTemplate: z.string(),

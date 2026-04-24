@@ -18,7 +18,9 @@ function labelFor(key: string): string {
 export async function Footer() {
 	const config = await getStoreConfig()
 	const links = Object.entries(config.socialLinks)
-		.filter((entry): entry is [string, string] => Boolean(entry[1]))
+		.filter((entry): entry is [string, string] =>
+			Boolean(entry[1]) && /^https?:\/\//i.test(entry[1]),
+		)
 		.map(([key, href]) => ({
 			key,
 			href,
