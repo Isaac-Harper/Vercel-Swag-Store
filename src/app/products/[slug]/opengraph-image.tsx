@@ -1,14 +1,12 @@
 import { cacheLife } from 'next/cache'
 import { ImageResponse } from 'next/og'
+import { notFound } from 'next/navigation'
 import { getProduct, listProducts } from '@/lib/api/products'
 import { formatPrice } from '@/lib/format'
 
 export const alt = 'Vercel Swag Store product'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
-// Prerender every slug from generateStaticParams; unknown slugs 404 instead
-// of falling back to a dynamic render at request time.
-export const dynamicParams = false
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://vercel-swag-store.vercel.app'
 const PLACEHOLDER_IMAGE = `${SITE_URL}/product-placeholder.svg`
@@ -40,28 +38,7 @@ async function fetchAsDataUrl(url: string): Promise<string> {
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
 	const { slug } = await params
 	const product = await getProduct(slug)
-
-	if (!product) {
-		return new ImageResponse(
-			(
-				<div
-					style={{
-						display: 'flex',
-						width: '100%',
-						height: '100%',
-						alignItems: 'center',
-						justifyContent: 'center',
-						backgroundColor: '#ffffff',
-						fontSize: 72,
-						fontWeight: 700,
-					}}
-				>
-					Vercel Swag Store
-				</div>
-			),
-			size
-		)
-	}
+	if (!product) notFound()
 
 	const image = await fetchAsDataUrl(product.images[0] ?? PLACEHOLDER_IMAGE)
 
