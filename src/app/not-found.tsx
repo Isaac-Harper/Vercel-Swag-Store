@@ -15,7 +15,10 @@ export default function NotFound() {
 	return (
 		<section className="flex flex-col items-center justify-center gap-12 h-screen">
 			<h1 className="text-3xl">Page not found</h1>
-			<Link href="/" className="text-accent hover:opacity-70 transition-opacity font-medium">
+			<Link
+				href="/"
+				className="text-black underline decoration-[hsl(var(--accent))] decoration-2 underline-offset-4 hover:opacity-70 transition-opacity font-medium"
+			>
 				Back home
 			</Link>
 		</section>
