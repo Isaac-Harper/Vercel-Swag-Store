@@ -1,5 +1,5 @@
 import { AddToCartForm } from '@/components/cart/AddToCartForm'
-import { getProductStockCached } from '@/lib/api/products'
+import { getProductStock } from '@/lib/api/products'
 import type { StockInfo } from '@/types/stock'
 
 function getStockMessage(info: StockInfo | null): string {
@@ -15,12 +15,10 @@ export async function ProductStockAndCart({
 	id: string
 	slug: string
 }) {
-	// Keyed by `id` (not `slug`) so this shares the cache entry that
-	// `<SearchResultsList>` / `<Featured>` populate — otherwise the detail
-	// page would hit the backend separately and show a different random
-	// value than the card the user clicked from. Checkout uses the uncached
-	// `getProductStock` for an authoritative read at charge time.
-	const stockInfo = await getProductStockCached(id)
+	// Detail page spec requires real-time stock, so bypass the hour-cached
+	// variant used by listings. The parent wraps this in Suspense so the
+	// live read streams in after the prerendered shell.
+	const stockInfo = await getProductStock(id)
 	const stock = stockInfo?.stock ?? 0
 	const message = getStockMessage(stockInfo)
 
