@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Suspense, type ReactNode } from 'react'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
@@ -19,6 +19,15 @@ function extractTwitterHandle(url?: string): string | undefined {
 	if (!url) return undefined
 	const match = url.match(/(?:twitter|x)\.com\/([^/?#]+)/)
 	return match ? `@${match[1]}` : undefined
+}
+
+export const viewport: Viewport = {
+	width: 'device-width',
+	initialScale: 1,
+	themeColor: [
+		{ media: '(prefers-color-scheme: light)', color: '#ffffff' },
+		{ media: '(prefers-color-scheme: dark)', color: '#000000' },
+	],
 }
 
 export async function generateMetadata(): Promise<Metadata> {
