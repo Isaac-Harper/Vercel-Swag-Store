@@ -30,6 +30,7 @@ export function CartPageInner({ itemsPromise }: { itemsPromise: Promise<CartItem
 					</button>
 				)}
 			</div>
+			<h2 className="sr-only">{view === 'cart' ? 'Items' : 'Details'}</h2>
 			<Suspense fallback={<CartItemsSkeleton />}>
 				<CartBody
 					itemsPromise={itemsPromise}

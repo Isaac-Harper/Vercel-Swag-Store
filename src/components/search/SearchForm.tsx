@@ -87,6 +87,7 @@ export function SearchForm({ categories }: { categories: Category[] }) {
 			/>
 			<select
 				name="category"
+				aria-label="Category"
 				value={category}
 				onChange={handleCategoryChange}
 				className="form-input bg-white sm:w-48"

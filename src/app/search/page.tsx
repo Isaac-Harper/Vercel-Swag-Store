@@ -31,6 +31,7 @@ export default async function SearchPage({
 				<Suspense fallback={<SearchFormSkeleton />}>
 					<SearchForm categories={categories} />
 				</Suspense>
+				<h2 className="sr-only">Results</h2>
 				<Suspense fallback={<SearchResultsSkeleton />}>
 					<SearchResults searchParams={searchParams} />
 				</Suspense>
