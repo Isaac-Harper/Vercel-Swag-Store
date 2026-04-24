@@ -95,7 +95,7 @@ export default async function ProductDetailPage({
 						<p className="text-2xl">{formatPrice(product.price)}</p>
 						<p className="text-base text-gray-700">{product.description}</p>
 						<Suspense fallback={<ProductStockAndCartSkeleton />}>
-							<ProductStockAndCart slug={product.slug} />
+							<ProductStockAndCart id={product.id} slug={product.slug} />
 						</Suspense>
 					</div>
 				</div>

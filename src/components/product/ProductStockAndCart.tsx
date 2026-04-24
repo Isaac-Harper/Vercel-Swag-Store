@@ -8,11 +8,19 @@ function getStockMessage(info: StockInfo | null): string {
 	return 'In stock'
 }
 
-export async function ProductStockAndCart({ slug }: { slug: string }) {
-	// Same cached source as search/featured so the number the user saw on
-	// the card matches what they see on the detail page. Checkout uses the
-	// uncached `getProductStock` for an authoritative read at charge time.
-	const stockInfo = await getProductStockForListing(slug)
+export async function ProductStockAndCart({
+	id,
+	slug,
+}: {
+	id: string
+	slug: string
+}) {
+	// Keyed by `id` (not `slug`) so this shares the cache entry that
+	// `<SearchResultsList>` / `<Featured>` populate — otherwise the detail
+	// page would hit the backend separately and show a different random
+	// value than the card the user clicked from. Checkout uses the uncached
+	// `getProductStock` for an authoritative read at charge time.
+	const stockInfo = await getProductStockForListing(id)
 	const stock = stockInfo?.stock ?? 0
 	const message = getStockMessage(stockInfo)
 
