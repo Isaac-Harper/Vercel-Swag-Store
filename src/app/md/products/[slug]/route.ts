@@ -1,5 +1,5 @@
 import { markdownResponse, productDetailMarkdown } from '@/lib/markdown'
-import { getProduct, getProductStockForListing } from '@/lib/api/products'
+import { getProduct, getProductStockCached } from '@/lib/api/products'
 
 const SITE_URL =
 	process.env.NEXT_PUBLIC_SITE_URL ?? 'https://vercel-swag-store.vercel.app'
@@ -16,6 +16,6 @@ export async function GET(
 			headers: { 'Content-Type': 'text/markdown; charset=utf-8' },
 		})
 	}
-	const stockInfo = await getProductStockForListing(product.id)
+	const stockInfo = await getProductStockCached(product.id)
 	return markdownResponse(productDetailMarkdown(product, SITE_URL, stockInfo?.stock ?? null))
 }

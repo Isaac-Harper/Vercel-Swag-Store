@@ -134,35 +134,18 @@ export async function getProductStock(slugOrId: string): Promise<StockInfo | nul
 }
 
 /**
- * Short-lived cached stock lookup (~5s). Used by cart rendering so rapid
- * drawer toggles or page nav don't fan out one request per line per open.
- * Checkout submission MUST use the uncached `getProductStock` for an
- * authoritative read at charge time.
+ * Hour-cached stock lookup used by every UI surface: featured, search,
+ * detail page, and the cart drawer. One shared cache entry per productId
+ * means all surfaces agree on the displayed value for the TTL window —
+ * important because the `/stock` endpoint returns a random value per call,
+ * so any shorter TTL produces jarring drift across pages.
+ *
+ * Checkout MUST use uncached `getProductStock` for an authoritative read
+ * at charge time.
  */
 export async function getProductStockCached(slugOrId: string): Promise<StockInfo | null> {
 	'use cache'
 
-	cacheLife({ stale: 5, revalidate: 5, expire: 30 })
-	return getProductStock(slugOrId)
-}
-
-/**
- * Longer-cached stock lookup (~minutes) for listing pages (Featured, Search).
- * Stock displayed on a card doesn't need cart-grade freshness — a few minutes
- * of staleness is acceptable in exchange for instant repeat-visit renders.
- * The cart and checkout still use the short-cache / uncached variants.
- */
-export async function getProductStockForListing(
-	slugOrId: string,
-): Promise<StockInfo | null> {
-	'use cache'
-
-	// `hours` (not `minutes`) so a product's displayed stock stays stable
-	// across the home → search → detail flow. The backend returns random
-	// values per fetch, and `minutes` (60s revalidate) was short enough that
-	// a user crossing two page views could see three different numbers for
-	// the same item. Checkout still uses uncached `getProductStock` for the
-	// authoritative read at charge time.
 	cacheLife('hours')
 	return getProductStock(slugOrId)
 }
@@ -177,7 +160,7 @@ export async function getListingStockMap(
 	productIds: readonly string[],
 ): Promise<Map<string, number>> {
 	if (productIds.length === 0) return new Map()
-	const stocks = await Promise.all(productIds.map((id) => getProductStockForListing(id)))
+	const stocks = await Promise.all(productIds.map((id) => getProductStockCached(id)))
 	const entries: [string, number][] = []
 	productIds.forEach((id, i) => {
 		const s = stocks[i]?.stock

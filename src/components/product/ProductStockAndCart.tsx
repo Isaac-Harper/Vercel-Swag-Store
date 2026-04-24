@@ -1,5 +1,5 @@
 import { AddToCartForm } from '@/components/cart/AddToCartForm'
-import { getProductStockForListing } from '@/lib/api/products'
+import { getProductStockCached } from '@/lib/api/products'
 import type { StockInfo } from '@/types/stock'
 
 function getStockMessage(info: StockInfo | null): string {
@@ -20,7 +20,7 @@ export async function ProductStockAndCart({
 	// page would hit the backend separately and show a different random
 	// value than the card the user clicked from. Checkout uses the uncached
 	// `getProductStock` for an authoritative read at charge time.
-	const stockInfo = await getProductStockForListing(id)
+	const stockInfo = await getProductStockCached(id)
 	const stock = stockInfo?.stock ?? 0
 	const message = getStockMessage(stockInfo)
 
