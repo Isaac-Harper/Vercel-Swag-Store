@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Card } from '@/components/product/Card'
 import { ProductStockProvider } from '@/components/product/ProductStockProvider'
 import { EagerPrefetch } from '@/components/ui/EagerPrefetch'
@@ -28,6 +29,22 @@ export async function SearchResultsList({
 	})
 
 	if (results.length === 0) {
+		if (pagination.total > 0 && page > pagination.totalPages) {
+			const searchParams = new URLSearchParams()
+			if (q) searchParams.set('q', q)
+			if (category) searchParams.set('category', category)
+			const qs = searchParams.toString()
+			const firstPageHref = qs ? `/search?${qs}` : '/search'
+			return (
+				<p className="text-gray-600">
+					Page {page} of {pagination.totalPages} doesn&rsquo;t exist.{' '}
+					<Link href={firstPageHref} className="underline">
+						Back to page 1
+					</Link>
+					.
+				</p>
+			)
+		}
 		return (
 			<p className="text-gray-600">
 				No products match {q ? `"${q}"` : 'your filters'}.
