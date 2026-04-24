@@ -3,15 +3,10 @@
 import { revalidatePath, updateTag } from 'next/cache'
 import * as cartApi from '@/lib/api/cart'
 import { getCartToken } from '@/lib/cart'
-import { CART_STOCK_CACHE_TAG } from '@/lib/api/products'
 
 async function revalidateCart() {
 	const token = await getCartToken()
 	if (token) updateTag(cartApi.cartCacheTag(token))
-	// Refresh cart-scoped stock so `atStockCap` (the `+` gate and "Only N left"
-	// badge) reflects the latest backend reading the moment the cart changes,
-	// rather than holding the 5s cache. Listing stock keeps its minutes-cache.
-	updateTag(CART_STOCK_CACHE_TAG)
 	revalidatePath('/', 'layout')
 }
 

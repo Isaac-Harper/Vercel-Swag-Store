@@ -1,4 +1,4 @@
-import { cacheLife, cacheTag } from 'next/cache'
+import { cacheLife } from 'next/cache'
 import { z } from 'zod'
 import { apiFetch } from '@/lib/api/client'
 import type { ProductListResponse, ProductResponse, StockResponse } from '@/types/api'
@@ -133,11 +133,6 @@ export async function getProductStock(slugOrId: string): Promise<StockInfo | nul
 	}
 }
 
-/** Tag for invalidating the short-lived per-item cart-stock cache. Cart
- *  mutations revalidate this so the drawer's `+` gate and "Only N left"
- *  checks pick up the latest stock read right after an add. */
-export const CART_STOCK_CACHE_TAG = 'cart-stock'
-
 /**
  * Short-lived cached stock lookup (~5s). Used by cart rendering so rapid
  * drawer toggles or page nav don't fan out one request per line per open.
@@ -148,7 +143,6 @@ export async function getProductStockCached(slugOrId: string): Promise<StockInfo
 	'use cache'
 
 	cacheLife({ stale: 5, revalidate: 5, expire: 30 })
-	cacheTag(CART_STOCK_CACHE_TAG)
 	return getProductStock(slugOrId)
 }
 
@@ -163,7 +157,13 @@ export async function getProductStockForListing(
 ): Promise<StockInfo | null> {
 	'use cache'
 
-	cacheLife('minutes')
+	// `hours` (not `minutes`) so a product's displayed stock stays stable
+	// across the home → search → detail flow. The backend returns random
+	// values per fetch, and `minutes` (60s revalidate) was short enough that
+	// a user crossing two page views could see three different numbers for
+	// the same item. Checkout still uses uncached `getProductStock` for the
+	// authoritative read at charge time.
+	cacheLife('hours')
 	return getProductStock(slugOrId)
 }
 
