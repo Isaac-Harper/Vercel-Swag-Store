@@ -5,7 +5,7 @@ import { Suspense } from 'react'
 import { JsonLd } from '@/components/ui/JsonLd'
 import { ProductStockAndCart } from '@/components/product/ProductStockAndCart'
 import { ProductStockAndCartSkeleton } from '@/components/product/ProductStockAndCartSkeleton'
-import { getProduct, listProducts } from '@/lib/api/products'
+import { getProduct, getProductStockCached, listProducts } from '@/lib/api/products'
 import { formatPrice } from '@/lib/format'
 import {
 	PRODUCT_PLACEHOLDER_BLUR,
@@ -53,6 +53,7 @@ export default async function ProductDetailPage({
 
 	const productUrl = `${SITE_URL}/products/${product.slug}`
 	const image = product.images[0] ?? PRODUCT_PLACEHOLDER_SRC
+	const stockInfo = await getProductStockCached(product.id)
 	const jsonLd = {
 		'@context': 'https://schema.org',
 		'@type': 'Product',
@@ -66,7 +67,10 @@ export default async function ProductDetailPage({
 			url: productUrl,
 			priceCurrency: product.currency,
 			price: product.price / 100,
-			availability: 'https://schema.org/InStock',
+			availability:
+				stockInfo?.stock === 0
+					? 'https://schema.org/OutOfStock'
+					: 'https://schema.org/InStock',
 		},
 	}
 
