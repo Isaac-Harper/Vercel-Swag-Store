@@ -33,8 +33,8 @@ export type CartWithProducts = {
  * Local cart line. `id` flattens `productId` since the backend uses it as the
  * line identifier (PATCH/DELETE target). `lineTotal` and `addedAt` are passed
  * through from the API so the UI doesn't have to recompute totals or invent
- * an order. `stock` is populated by `getCartWithStock` when known — undefined
- * means "stock check failed or not yet fetched", treat as unlimited for UI.
+ * an order. Stock lives in a separate `Map<productId, number>` streamed via
+ * `CartStockProvider` so items render before stock resolves.
  */
 export type CartItem = {
 	id: string
@@ -42,5 +42,4 @@ export type CartItem = {
 	quantity: number
 	addedAt: string
 	lineTotal: number
-	stock?: number
 }

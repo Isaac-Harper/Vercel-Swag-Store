@@ -1,6 +1,8 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
-import { LinkPending } from '@/components/ui/LinkPending'
+import { useProductStockMap } from '@/components/product/ProductStockProvider'
 import { formatPrice } from '@/lib/format'
 import {
 	PRODUCT_PLACEHOLDER_BLUR,
@@ -8,6 +10,7 @@ import {
 } from '@/lib/image-placeholder'
 
 type CardProps = {
+	id: string
 	slug: string
 	name: string
 	price: number
@@ -17,16 +20,14 @@ type CardProps = {
 	 * browser starts the fetch before JS runs. Use sparingly.
 	 */
 	priority?: boolean
-	/**
-	 * Real-time stock level. `undefined` means stock wasn't fetched (treat as
-	 * unknown — render normally). `0` greys the card and shows an "Out of
-	 * stock" badge. 1–5 shows a "Only N left" badge.
-	 */
-	stock?: number
 }
 
-export function Card({ slug, name, price, images, priority, stock }: CardProps) {
+export function Card({ id, slug, name, price, images, priority }: CardProps) {
 	const image = images[0] ?? PRODUCT_PLACEHOLDER_SRC
+	// `undefined` = stock hasn't streamed in yet (or backend had no record).
+	// Render the card normally; badges appear once `<ProductStockProvider>`
+	// resolves its stock promise.
+	const stock = useProductStockMap().get(id)
 	const outOfStock = stock === 0
 	const lowStock = stock !== undefined && stock > 0 && stock <= 5
 	return (
@@ -35,7 +36,6 @@ export function Card({ slug, name, price, images, priority, stock }: CardProps) 
 				href={`/products/${slug}`}
 				className={`relative flex flex-col gap-3 group ${outOfStock ? 'opacity-60' : ''}`}
 			>
-				<LinkPending />
 				<div className="relative w-full pb-[100%]">
 					<Image
 						src={image}

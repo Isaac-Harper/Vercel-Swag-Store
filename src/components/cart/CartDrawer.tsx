@@ -7,7 +7,13 @@ import { CartBody, type CartViewMode } from '@/components/cart/CartBody'
 import { CartItemsSkeleton } from '@/components/cart/CartItemsSkeleton'
 import type { CartItem } from '@/types/cart'
 
-export function CartDrawer({ itemsPromise }: { itemsPromise: Promise<CartItem[]> }) {
+export function CartDrawer({
+	itemsPromise,
+	stockPromise,
+}: {
+	itemsPromise: Promise<CartItem[]>
+	stockPromise: Promise<Map<string, number>>
+}) {
 	const router = useRouter()
 	const [view, setView] = useState<CartViewMode>('cart')
 
@@ -82,6 +88,7 @@ export function CartDrawer({ itemsPromise }: { itemsPromise: Promise<CartItem[]>
 					>
 						<CartBody
 							itemsPromise={itemsPromise}
+							stockPromise={stockPromise}
 							view={view}
 							onCheckoutAction={goToCheckout}
 							onDoneAction={close}

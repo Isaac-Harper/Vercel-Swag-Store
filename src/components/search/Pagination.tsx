@@ -1,26 +1,44 @@
+'use client'
+
+import { useSearchParams } from 'next/navigation'
 import { PageLink } from '@/components/search/PageLink'
+import { useSearchNav } from '@/components/search/SearchNavProvider'
 
 type Props = {
 	pathname: string
 	/** Other query params to preserve across page links (q, category, etc.). */
 	baseParams: Record<string, string>
-	currentPage: number
 	totalPages: number
 	/** Query key for the page number (default `page`). Page 1 is omitted. */
 	pageParam?: string
 }
 
 /**
- * Server-component pagination. URL building is internal so the parent passes
- * only primitives — no inline functions in JSX.
+ * Client pagination. `currentPage` is read from `useSearchParams()` so the
+ * highlighted cell updates the instant `<SearchNavProvider>` calls
+ * `history.pushState`, rather than waiting for the RSC transition to commit.
  */
 export function Pagination({
 	pathname,
 	baseParams,
-	currentPage,
 	totalPages,
 	pageParam = 'page',
 }: Props) {
+	const searchParams = useSearchParams()
+	const { pendingHref } = useSearchNav()
+	// Prefer the optimistic `pendingHref` set by `startNav` — `useSearchParams`
+	// doesn't react to our sync `history.pushState`, so without this the
+	// highlighted cell would lag behind the URL until the RSC commit.
+	const activeParams = pendingHref
+		? new URLSearchParams(pendingHref.split('?')[1] ?? '')
+		: searchParams
+	const raw = activeParams.get(pageParam) ?? '1'
+	const parsed = Number.parseInt(raw, 10)
+	const currentPage = Math.min(
+		Math.max(1, Number.isFinite(parsed) ? parsed : 1),
+		Math.max(1, totalPages),
+	)
+
 	if (totalPages <= 1) return null
 
 	const buildHref = (page: number) => {

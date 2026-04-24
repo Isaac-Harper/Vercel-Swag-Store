@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { CartPageInner } from '@/components/cart/CartPageInner'
-import { getCartWithStock } from '@/lib/api/cart'
+import { getCart, getCartStockMap } from '@/lib/api/cart'
 
 export const metadata: Metadata = {
 	title: 'Cart',
@@ -18,7 +18,7 @@ export default function CartPage() {
 	return (
 		<section className="px-4 py-16">
 			<div className="mx-auto flex min-h-[60vh] max-w-2xl flex-col">
-				<CartPageInner itemsPromise={getCartWithStock()} />
+				<CartPageInner itemsPromise={getCart()} stockPromise={getCartStockMap()} />
 			</div>
 		</section>
 	)

@@ -1,27 +1,36 @@
 'use client'
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import {
+	use,
 	useEffect,
 	useRef,
 	useState,
-	useTransition,
 	type ChangeEvent,
 	type FormEvent,
 } from 'react'
+import { useSearchNav } from '@/components/search/SearchNavProvider'
 import type { Category } from '@/types/category'
 
 const DEBOUNCE_MS = 300
 const AUTO_SEARCH_MIN_CHARS = 3
 
-export function SearchForm({ categories }: { categories: Category[] }) {
-	const router = useRouter()
+export function SearchForm({
+	categoriesPromise,
+}: {
+	categoriesPromise: Promise<Category[]>
+}) {
+	// Suspends the form until the categories list arrives. The parent wraps
+	// `<SearchForm>` in a `<Suspense fallback={<SearchFormSkeleton />}>`, so
+	// this `use()` makes that fallback actually show (previously the page
+	// awaited categories server-side, so the fallback was unreachable).
+	const categories = use(categoriesPromise)
 	const pathname = usePathname()
 	const params = useSearchParams()
+	const { startNav, isPending } = useSearchNav()
 	const [q, setQ] = useState(params.get('q') ?? '')
 	const [category, setCategory] = useState(params.get('category') ?? '')
 	const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-	const [pending, startTransition] = useTransition()
 
 	useEffect(
 		() => () => {
@@ -46,9 +55,7 @@ export function SearchForm({ categories }: { categories: Category[] }) {
 	}
 
 	function pushQuery(nextQ: string, nextCategory: string) {
-		startTransition(() => {
-			router.push(buildUrl(nextQ, nextCategory))
-		})
+		startNav(buildUrl(nextQ, nextCategory))
 	}
 
 	function handleQChange({ target: { value } }: ChangeEvent<HTMLInputElement>) {
@@ -101,10 +108,10 @@ export function SearchForm({ categories }: { categories: Category[] }) {
 			</select>
 			<button
 				type="submit"
-				disabled={pending}
+				disabled={isPending}
 				className="cursor-pointer rounded bg-black px-6 py-2 text-sm font-medium text-white transition hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:opacity-60"
 			>
-				{pending ? 'Searching…' : 'Search'}
+				{isPending ? 'Searching…' : 'Search'}
 			</button>
 		</form>
 	)

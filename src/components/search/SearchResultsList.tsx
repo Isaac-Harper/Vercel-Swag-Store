@@ -1,6 +1,7 @@
 import { Card } from '@/components/product/Card'
+import { ProductStockProvider } from '@/components/product/ProductStockProvider'
 import { EagerPrefetch } from '@/components/ui/EagerPrefetch'
-import { getProductStockForListing, listProductsPaginated } from '@/lib/api/products'
+import { getListingStockMap, listProductsPaginated } from '@/lib/api/products'
 
 export const PAGE_SIZE = 5
 
@@ -34,19 +35,22 @@ export async function SearchResultsList({
 		)
 	}
 
-	// Resolve stock before rendering to avoid badges popping in after first paint.
-	const stocks = await Promise.all(results.map((p) => getProductStockForListing(p.id)))
+	// Unawaited — the card grid paints on the products fetch; badges stream
+	// in via `<ProductStockProvider>` once the stock map resolves.
+	const stockPromise = getListingStockMap(results.map((p) => p.id))
 
 	const start = (page - 1) * PAGE_SIZE + 1
 	const end = start + results.length - 1
 
 	return (
 		<>
-			<ul className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
-				{results.map((product, i) => (
-					<Card key={product.slug} {...product} stock={stocks[i]?.stock} />
-				))}
-			</ul>
+			<ProductStockProvider stockPromise={stockPromise}>
+				<ul className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+					{results.map((product) => (
+						<Card key={product.slug} {...product} />
+					))}
+				</ul>
+			</ProductStockProvider>
 			<EagerPrefetch hrefs={results.map((p) => `/products/${p.slug}`)} />
 			<p className="mt-4 text-xs text-gray-500">
 				Showing {start}–{end} of {pagination.total} results.

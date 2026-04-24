@@ -141,15 +141,22 @@ export async function getCartCount(): Promise<number> {
 }
 
 /**
- * Cart with real-time stock per line. Used by the cart UI to gate the
- * `+` button and by checkout to validate before charging. Stock is fetched
- * uncached in parallel — adds one extra round trip per line.
+ * `productId -> stock` for the current cart. The backend's `/cart` response
+ * doesn't include stock, so we fan out one short-cached stock request per
+ * line. Exposed separately from `getCart` so the UI can stream items in on
+ * the first round-trip and let stock-dependent decorations (badges, `+`
+ * disable) arrive in a second pass. Missing entries = stock unknown.
  */
-export async function getCartWithStock(): Promise<CartItem[]> {
+export async function getCartStockMap(): Promise<Map<string, number>> {
 	const items = await getCart()
-	if (items.length === 0) return items
+	if (items.length === 0) return new Map()
 	const stocks = await Promise.all(items.map((item) => getProductStockCached(item.product.id)))
-	return items.map((item, i) => ({ ...item, stock: stocks[i]?.stock }))
+	const entries: [string, number][] = []
+	items.forEach((item, i) => {
+		const s = stocks[i]?.stock
+		if (typeof s === 'number') entries.push([item.product.id, s])
+	})
+	return new Map(entries)
 }
 
 export async function addToCart(slug: string, quantity: number): Promise<void> {

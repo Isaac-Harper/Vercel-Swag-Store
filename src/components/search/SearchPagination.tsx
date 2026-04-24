@@ -31,7 +31,6 @@ export async function SearchPagination({
 		<Pagination
 			pathname="/search"
 			baseParams={baseParams}
-			currentPage={pagination.page}
 			totalPages={pagination.totalPages}
 		/>
 	)

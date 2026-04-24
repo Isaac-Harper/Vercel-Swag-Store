@@ -6,7 +6,13 @@ import { CartBody, type CartViewMode } from '@/components/cart/CartBody'
 import { CartItemsSkeleton } from '@/components/cart/CartItemsSkeleton'
 import type { CartItem } from '@/types/cart'
 
-export function CartPageInner({ itemsPromise }: { itemsPromise: Promise<CartItem[]> }) {
+export function CartPageInner({
+	itemsPromise,
+	stockPromise,
+}: {
+	itemsPromise: Promise<CartItem[]>
+	stockPromise: Promise<Map<string, number>>
+}) {
 	const router = useRouter()
 	const [view, setView] = useState<CartViewMode>('cart')
 
@@ -34,6 +40,7 @@ export function CartPageInner({ itemsPromise }: { itemsPromise: Promise<CartItem
 			<Suspense fallback={<CartItemsSkeleton />}>
 				<CartBody
 					itemsPromise={itemsPromise}
+					stockPromise={stockPromise}
 					view={view}
 					onCheckoutAction={goToCheckout}
 					onDoneAction={goHome}

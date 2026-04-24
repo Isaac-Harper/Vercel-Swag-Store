@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useOptimistic, useRef, useState, useTransition } from 'react'
 import { removeFromCart, updateCartQuantity } from '@/actions/cart'
 import { useCartCount } from '@/components/cart/CartCountProvider'
+import { useCartStockMap } from '@/components/cart/CartStockProvider'
 import type { CartItem } from '@/types/cart'
 import { formatPrice } from '@/lib/format'
 
@@ -36,6 +37,7 @@ export function CartView({
 	const [optimisticItems, applyOptimistic] = useOptimistic(items, applyAction)
 	const { addOptimistic: addOptimisticCount } = useCartCount()
 	const [, startTransition] = useTransition()
+	const stockMap = useCartStockMap()
 
 	// Coalesce rapid +/- clicks per line: a leading 100ms wait clusters a quick
 	// double-click into one request; while one is in flight, additional clicks
@@ -92,8 +94,9 @@ export function CartView({
 					<p className="text-gray-500">Your cart is empty.</p>
 				) : (
 					<ul className="flex flex-col gap-4">
-						{optimisticItems.map(({ id, product, quantity, stock }) => {
+						{optimisticItems.map(({ id, product, quantity }) => {
 							const image = product.images[0] ?? '/product-placeholder.svg'
+							const stock = stockMap.get(product.id)
 							const atStockCap = stock !== undefined && quantity >= stock
 
 							function decrement() {
