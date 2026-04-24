@@ -9,7 +9,7 @@ export function FeaturedSkeleton() {
 					<h2 className="text-2xl sm:text-3xl font-bold">Featured Products</h2>
 				</div>
 				<ul className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
-					{['a', 'b', 'c', 'd'].map((k) => (
+					{['a', 'b', 'c', 'd', 'e', 'f'].map((k) => (
 						<li key={k} className="flex flex-col gap-3">
 							<div className="relative w-full pb-[100%]">
 								{/* Same placeholder the Card shows while images load —

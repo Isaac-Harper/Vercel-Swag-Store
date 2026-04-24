@@ -5,9 +5,18 @@ import { EagerPrefetch } from '@/components/ui/EagerPrefetch'
 import { getListingStockMap, listProducts } from '@/lib/api/products'
 
 const PRIORITY_COUNT = 2
+const MIN_COUNT = 6
 
 export async function Featured() {
-	const products = await listProducts({ featured: true })
+	const featured = await listProducts({ featured: true, limit: MIN_COUNT })
+	// Spec requires at least 6 — backfill with non-featured products if
+	// the backend returns fewer featured entries than we need.
+	let products = featured
+	if (featured.length < MIN_COUNT) {
+		const fill = await listProducts({ limit: MIN_COUNT })
+		const seen = new Set(featured.map((p) => p.id))
+		products = [...featured, ...fill.filter((p) => !seen.has(p.id))].slice(0, MIN_COUNT)
+	}
 	// Unawaited — feeds `<ProductStockProvider>` which paints cards on the
 	// products fetch and streams stock badges in under its own Suspense.
 	const stockPromise = getListingStockMap(products.map((p) => p.id))
