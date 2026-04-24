@@ -1,3 +1,5 @@
+import 'server-only'
+
 /**
  * Base HTTP client for backend API calls.
  *

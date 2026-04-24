@@ -1,3 +1,5 @@
+import 'server-only'
+
 import { cacheLife } from 'next/cache'
 import { z } from 'zod'
 import { apiFetch } from '@/lib/api/client'

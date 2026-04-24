@@ -1,3 +1,5 @@
+import 'server-only'
+
 import type { CreateOrderInput, OrderResult } from '@/types/order'
 
 export async function createOrder(input: CreateOrderInput): Promise<OrderResult> {
