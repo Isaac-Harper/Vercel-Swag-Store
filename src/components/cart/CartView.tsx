@@ -7,6 +7,10 @@ import { useCartCount } from '@/components/cart/CartCountProvider'
 import { useCartStockMap } from '@/components/cart/CartStockProvider'
 import type { CartItem } from '@/types/cart'
 import { formatPrice } from '@/lib/format'
+import {
+	PRODUCT_PLACEHOLDER_BLUR,
+	PRODUCT_PLACEHOLDER_SRC,
+} from '@/lib/image-placeholder'
 
 type OptimisticAction =
 	| { type: 'update'; id: string; quantity: number }
@@ -95,7 +99,7 @@ export function CartView({
 				) : (
 					<ul className="flex flex-col gap-4">
 						{optimisticItems.map(({ id, product, quantity }) => {
-							const image = product.images[0] ?? '/product-placeholder.svg'
+							const image = product.images[0] ?? PRODUCT_PLACEHOLDER_SRC
 							const stock = stockMap.get(product.id)
 							const atStockCap = stock !== undefined && quantity >= stock
 
@@ -138,6 +142,8 @@ export function CartView({
 											alt={product.name}
 											fill
 											sizes="80px"
+											placeholder="blur"
+											blurDataURL={PRODUCT_PLACEHOLDER_BLUR}
 											className="object-cover"
 										/>
 									</div>
