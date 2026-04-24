@@ -1,18 +1,13 @@
 import Link from 'next/link'
-import { z } from 'zod'
 
-const heroSchema = z.object({
-	heading: z.string(),
-	subheading: z.string(),
-	buttonText: z.string(),
-	buttonLink: z.string().default('/'),
-})
+type HeroProps = {
+	heading: string
+	subheading: string
+	buttonText: string
+	buttonLink: string
+}
 
-type HeroProps = z.input<typeof heroSchema>
-
-export function Hero(props: HeroProps) {
-	const { heading, subheading, buttonText, buttonLink } = heroSchema.parse(props)
-
+export function Hero({ heading, subheading, buttonText, buttonLink }: HeroProps) {
 	return (
 		<section className="flex flex-col items-center justify-center gap-4 px-4 py-24 text-center">
 			<h1 className="text-4xl font-bold">{heading}</h1>
