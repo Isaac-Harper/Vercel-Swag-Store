@@ -1,5 +1,5 @@
 import { AddToCartForm } from '@/components/cart/AddToCartForm'
-import { getProductStock } from '@/lib/api/products'
+import { getProductStockForListing } from '@/lib/api/products'
 import type { StockInfo } from '@/types/stock'
 
 function getStockMessage(info: StockInfo | null): string {
@@ -9,7 +9,10 @@ function getStockMessage(info: StockInfo | null): string {
 }
 
 export async function ProductStockAndCart({ slug }: { slug: string }) {
-	const stockInfo = await getProductStock(slug)
+	// Same cached source as search/featured so the number the user saw on
+	// the card matches what they see on the detail page. Checkout uses the
+	// uncached `getProductStock` for an authoritative read at charge time.
+	const stockInfo = await getProductStockForListing(slug)
 	const stock = stockInfo?.stock ?? 0
 	const message = getStockMessage(stockInfo)
 
