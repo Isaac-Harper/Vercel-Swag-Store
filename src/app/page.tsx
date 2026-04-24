@@ -28,7 +28,7 @@ export default function Home() {
 				heading="Wear the framework you ship with."
 				subheading="Premium swag for developers who build with Vercel. From tees to tech gear, represent the tools you love."
 				buttonText="Browse all Products"
-				buttonLink="/products"
+				buttonLink="/search"
 			/>
 			<Suspense fallback={<FeaturedSkeleton />}>
 				<Featured />
