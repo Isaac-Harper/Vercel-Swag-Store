@@ -74,7 +74,7 @@ export function CartDrawer({
 								aria-label="Close"
 								className="cursor-pointer text-2xl leading-none transition-opacity hover:opacity-70 active:opacity-50"
 							>
-								&times;
+								<span aria-hidden>&times;</span>
 							</button>
 						</Dialog.Close>
 					</div>
