@@ -78,8 +78,18 @@ pnpm start
 
 ```bash
 pnpm test:setup   # playwright install (first time)
-pnpm test:e2e     # Playwright — home, search, cart flows
-pnpm test:api     # Playwright — markdown negotiation, robots.txt, Link headers
+pnpm test:e2e     # Playwright — browser flows
+pnpm test:api     # Playwright — request-level checks
 pnpm test:unit    # Jest + Testing Library
 pnpm test         # all three
 ```
+
+`tests/playwright.e2e-config.ts` boots `pnpm dev` automatically. To run against a deployed URL instead, set `PLAYWRIGHT_BASE_URL` (the dev-server boot is skipped). Browsers covered: chromium, firefox, webkit, mobile-chrome.
+
+| Suite | Spec | What it covers |
+|---|---|---|
+| e2e | `home.spec.ts` | Hero renders; featured grid streams in; header link navigates to `/search` |
+| e2e | `search.spec.ts` | Results + pagination render; product card opens detail page; submitting `q` updates the URL |
+| e2e | `cart.spec.ts` | Add-to-cart bumps the header badge optimistically; `/cart` opens the drawer dialog |
+| api | `agent-friendly.spec.ts` | `robots.txt` (AI bot rules, Content-Signal, sitemap); `Accept: text/markdown` negotiation on `/` and `/products/[slug]`; `Link: rel="alternate"` + `Vary: Accept` headers |
+| unit | `page.test.tsx` | Home page renders a `<main>` landmark under jsdom |
