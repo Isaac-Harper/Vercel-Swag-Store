@@ -105,7 +105,7 @@ export function SearchForm({
 				aria-label="Category"
 				value={category}
 				onChange={handleCategoryChange}
-				className="form-input bg-white sm:w-48"
+				className="form-input form-select sm:w-48"
 			>
 				<option value="">All categories</option>
 				{categories.map((c) => (
