@@ -7,6 +7,7 @@ export function FeaturedSkeleton() {
 			<div className="mx-auto max-w-6xl">
 				<div className="mb-8 flex items-baseline justify-between gap-4">
 					<h2 className="text-2xl sm:text-3xl font-bold">Featured Products</h2>
+					<div className="h-4 w-16 animate-pulse rounded bg-gray-100" />
 				</div>
 				<ul className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
 					{['a', 'b', 'c', 'd', 'e', 'f'].map((k) => (
