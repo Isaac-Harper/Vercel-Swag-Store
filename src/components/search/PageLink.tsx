@@ -37,9 +37,9 @@ export function PageLink({ href, current, disabled, children, ...rest }: Props) 
 
 	if (disabled) {
 		return (
-			<span aria-disabled className={className} {...rest}>
+			<button type="button" disabled className={className} {...rest}>
 				{children}
-			</span>
+			</button>
 		)
 	}
 
