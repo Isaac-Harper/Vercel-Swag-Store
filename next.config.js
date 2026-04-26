@@ -5,7 +5,6 @@ const nextConfig = {
 	// the meta description in some Lighthouse runs (SEO 92 -> 100 swing). The
 	// 70ms render-blocking CSS hit is acceptable cost for a stable SEO signal.
 	images: {
-		dangerouslyAllowSVG: true,
 		remotePatterns: [
 			{ hostname: 'cdn.raster.app' },
 			{ hostname: 'rstr.in' },
@@ -13,7 +12,6 @@ const nextConfig = {
 		],
 		formats: ['image/avif', 'image/webp'],
 		contentDispositionType: 'attachment',
-		contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
 		// Optimized variants are kept for 31 days. Source product images on
 		// vercel-storage are immutable per URL, so re-fetching from origin is
 		// pure waste. Bust by changing the image URL (new upload).
