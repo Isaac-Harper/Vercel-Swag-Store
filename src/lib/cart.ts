@@ -17,6 +17,7 @@ export async function setCartToken(token: string) {
 		maxAge: MAX_AGE,
 		sameSite: 'lax',
 		httpOnly: true,
+		secure: process.env.NODE_ENV === 'production',
 	})
 }
 
