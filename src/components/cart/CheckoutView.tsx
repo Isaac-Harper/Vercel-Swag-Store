@@ -11,7 +11,7 @@ import {
 } from 'react'
 import { submitCheckout, type CheckoutState } from '@/actions/checkout'
 import { Required } from '@/components/ui/Required'
-import { usStates } from '@/data/usStates'
+import { US_STATE_NAMES, usStates } from '@/data/usStates'
 import { formatPrice } from '@/lib/format'
 import type { Cents } from '@/types/money'
 
@@ -46,7 +46,7 @@ function formatExpiry(next: string, prev: string): string {
 	return digits.length >= 3 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits
 }
 
-const statesPattern = usStates.map((s) => s.name).join('|')
+const statesPattern = US_STATE_NAMES.join('|')
 
 const initialState: CheckoutState = { ok: false }
 

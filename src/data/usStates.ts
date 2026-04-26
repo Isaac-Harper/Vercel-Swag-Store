@@ -51,3 +51,5 @@ export const usStates = [
 	{ code: 'WI', name: 'Wisconsin' },
 	{ code: 'WY', name: 'Wyoming' },
 ]
+
+export const US_STATE_NAMES = usStates.map((s) => s.name)

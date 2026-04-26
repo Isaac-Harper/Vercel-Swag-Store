@@ -6,9 +6,7 @@ import { cartCacheTag, clearCart, getCart } from '@/lib/api/cart'
 import { createOrder } from '@/lib/api/orders'
 import { getProductStock } from '@/lib/api/products'
 import { getCartToken } from '@/lib/cart'
-import { usStates } from '@/data/usStates'
-
-const stateNames = usStates.map((s) => s.name)
+import { US_STATE_NAMES } from '@/data/usStates'
 
 const checkoutSchema = z.object({
 	email: z.email({ message: 'Enter a valid email' }),
@@ -20,7 +18,7 @@ const checkoutSchema = z.object({
 	'address-level1': z
 		.string()
 		.trim()
-		.refine((v) => stateNames.includes(v), 'Pick a valid US state'),
+		.refine((v) => US_STATE_NAMES.includes(v), 'Pick a valid US state'),
 	'postal-code': z
 		.string()
 		.regex(/^\d{5}(-\d{4})?$/, 'Use 12345 or 12345-6789'),
