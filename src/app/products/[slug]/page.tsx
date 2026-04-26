@@ -58,7 +58,8 @@ export default async function ProductDetailPage({
 		'@type': 'Product',
 		name: product.name,
 		description: product.description,
-		sku: product.slug,
+		sku: product.id,
+		brand: { '@type': 'Brand', name: 'Vercel' },
 		category: product.category,
 		image: `${productUrl}/opengraph-image`,
 		offers: {
