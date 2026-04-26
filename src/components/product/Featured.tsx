@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { Card } from '@/components/product/Card'
 import { ProductStockProvider } from '@/components/product/ProductStockProvider'
-import { EagerPrefetch } from '@/components/ui/EagerPrefetch'
 import { getListingStockMap, listProducts } from '@/lib/api/products'
 
 const PRIORITY_COUNT = 2
@@ -39,7 +38,6 @@ export async function Featured() {
 						))}
 					</ul>
 				</ProductStockProvider>
-				<EagerPrefetch hrefs={products.map((p) => `/products/${p.slug}`)} />
 			</div>
 		</section>
 	)

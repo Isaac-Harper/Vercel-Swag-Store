@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { Card } from '@/components/product/Card'
 import { ProductStockProvider } from '@/components/product/ProductStockProvider'
-import { EagerPrefetch } from '@/components/ui/EagerPrefetch'
 import { getListingStockMap, listProductsPaginated } from '@/lib/api/products'
 
 export const PAGE_SIZE = 5
@@ -68,7 +67,6 @@ export async function SearchResultsList({
 					))}
 				</ul>
 			</ProductStockProvider>
-			<EagerPrefetch hrefs={results.map((p) => `/products/${p.slug}`)} />
 			<p className="mt-4 text-xs text-gray-500">
 				Showing {start}–{end} of {pagination.total} results.
 			</p>
