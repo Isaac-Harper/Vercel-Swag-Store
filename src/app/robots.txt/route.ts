@@ -1,5 +1,4 @@
-const SITE_URL =
-	process.env.NEXT_PUBLIC_SITE_URL ?? 'https://vercel-swag-store.vercel.app'
+import { SITE_URL } from '@/lib/site'
 
 /**
  * Plain-text robots.txt so we can include `Content-Signal:` directives, which

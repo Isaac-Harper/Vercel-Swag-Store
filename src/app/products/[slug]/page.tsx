@@ -11,9 +11,7 @@ import {
 	PRODUCT_PLACEHOLDER_BLUR,
 	PRODUCT_PLACEHOLDER_SRC,
 } from '@/lib/image-placeholder'
-
-const SITE_URL =
-	process.env.NEXT_PUBLIC_SITE_URL ?? 'https://vercel-swag-store.vercel.app'
+import { SITE_URL } from '@/lib/site'
 
 export async function generateStaticParams() {
 	const products = await listProducts()

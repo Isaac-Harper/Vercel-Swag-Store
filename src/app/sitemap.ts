@@ -1,8 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { listProducts } from '@/lib/api/products'
-
-const SITE_URL =
-	process.env.NEXT_PUBLIC_SITE_URL ?? 'https://vercel-swag-store.vercel.app'
+import { SITE_URL } from '@/lib/site'
 
 // Captured at module load (build time during prerender). Cache Components
 // rejects `new Date()` inside the request path, so this stays at module scope —

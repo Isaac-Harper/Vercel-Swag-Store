@@ -1,8 +1,6 @@
 import { JsonLd } from '@/components/ui/JsonLd'
 import { getStoreConfig } from '@/lib/api/store'
-
-const SITE_URL =
-	process.env.NEXT_PUBLIC_SITE_URL ?? 'https://vercel-swag-store.vercel.app'
+import { SITE_URL } from '@/lib/site'
 
 /**
  * Separated from `src/app/page.tsx` so `getStoreConfig` (used only to build

@@ -9,11 +9,9 @@ import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { Promo } from '@/components/layout/Promo'
 import { getStoreConfig } from '@/lib/api/store'
+import { SITE_URL } from '@/lib/site'
 
 import './globals.css'
-
-const SITE_URL =
-	process.env.NEXT_PUBLIC_SITE_URL ?? 'https://vercel-swag-store.vercel.app'
 
 function extractTwitterHandle(url?: string): string | undefined {
 	if (!url) return undefined

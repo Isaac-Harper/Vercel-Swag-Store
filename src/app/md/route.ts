@@ -1,9 +1,7 @@
 import { markdownResponse, productLineMarkdown } from '@/lib/markdown'
 import { listProducts } from '@/lib/api/products'
 import { getStoreConfig } from '@/lib/api/store'
-
-const SITE_URL =
-	process.env.NEXT_PUBLIC_SITE_URL ?? 'https://vercel-swag-store.vercel.app'
+import { SITE_URL } from '@/lib/site'
 
 export async function GET() {
 	const [config, featured] = await Promise.all([

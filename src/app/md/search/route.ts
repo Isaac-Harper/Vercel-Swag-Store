@@ -1,9 +1,7 @@
 import { PAGE_SIZE } from '@/components/search/SearchResultsList'
 import { markdownResponse, productLineMarkdown } from '@/lib/markdown'
 import { listProductsPaginated } from '@/lib/api/products'
-
-const SITE_URL =
-	process.env.NEXT_PUBLIC_SITE_URL ?? 'https://vercel-swag-store.vercel.app'
+import { SITE_URL } from '@/lib/site'
 
 export async function GET(request: Request) {
 	const { searchParams } = new URL(request.url)

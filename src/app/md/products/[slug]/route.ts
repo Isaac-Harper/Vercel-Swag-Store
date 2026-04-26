@@ -1,8 +1,6 @@
 import { markdownResponse, productDetailMarkdown } from '@/lib/markdown'
 import { getProduct, getProductStockCached } from '@/lib/api/products'
-
-const SITE_URL =
-	process.env.NEXT_PUBLIC_SITE_URL ?? 'https://vercel-swag-store.vercel.app'
+import { SITE_URL } from '@/lib/site'
 
 export async function GET(
 	_request: Request,

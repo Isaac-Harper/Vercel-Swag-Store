@@ -3,12 +3,12 @@ import { ImageResponse } from 'next/og'
 import { notFound } from 'next/navigation'
 import { getProduct, listProducts } from '@/lib/api/products'
 import { formatPrice } from '@/lib/format'
+import { SITE_URL } from '@/lib/site'
 
 export const alt = 'Vercel Swag Store product'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://vercel-swag-store.vercel.app'
 const PLACEHOLDER_IMAGE = `${SITE_URL}/product-placeholder.svg`
 
 export async function generateStaticParams() {
