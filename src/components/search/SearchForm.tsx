@@ -61,6 +61,8 @@ export function SearchForm({
 	function handleQChange({ target: { value } }: ChangeEvent<HTMLInputElement>) {
 		setQ(value)
 		if (debounceRef.current) clearTimeout(debounceRef.current)
+		// Spec requires auto-search at >= 3 chars; we also fire on 0 chars so
+		// clearing the input restores the unfiltered list without a manual submit.
 		if (value.length === 0 || value.length >= AUTO_SEARCH_MIN_CHARS) {
 			debounceRef.current = setTimeout(() => pushQuery(value, category), DEBOUNCE_MS)
 		}
