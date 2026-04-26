@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default function CartPage() {
 	return (
 		<section className="px-4 py-16">
-			<div className="mx-auto flex min-h-[60vh] max-w-2xl flex-col">
+			<div className="mx-auto flex min-h-[60dvh] max-w-2xl flex-col">
 				<CartPageInner itemsPromise={getCart()} stockPromise={getCartStockMap()} />
 			</div>
 		</section>
