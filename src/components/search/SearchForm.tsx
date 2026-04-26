@@ -86,7 +86,11 @@ export function SearchForm({
 			onSubmit={handleSubmit}
 			className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center"
 		>
+			<label htmlFor="search-q" className="sr-only">
+				Search products
+			</label>
 			<input
+				id="search-q"
 				type="search"
 				name="q"
 				value={q}
