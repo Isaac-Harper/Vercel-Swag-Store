@@ -33,6 +33,7 @@ export async function HomeJsonLd() {
 				'@type': 'Organization',
 				name: config.storeName,
 				url: SITE_URL,
+				logo: `${SITE_URL}/icon`,
 				...(sameAs.length > 0 && { sameAs }),
 			},
 		],
