@@ -7,7 +7,6 @@ import { CartLinkPending } from '@/components/cart/CartLinkPending'
 
 export function Header({ cartBadge }: { cartBadge: ReactNode }) {
 	const pathname = usePathname()
-	const onCartPage = pathname === '/cart'
 
 	return (
 		<header className="p-4">
@@ -38,17 +37,11 @@ export function Header({ cartBadge }: { cartBadge: ReactNode }) {
 				>
 					Search
 				</Link>
-				{/* Always render the cart link so server/client HTML matches even
-				    if pathname briefly disagrees during a redirect or transition.
-				    Disable visually + via aria-current when the user is already
-				    on /cart. */}
 				<Link
 					href="/cart"
 					scroll={false}
-					aria-current={onCartPage ? 'page' : undefined}
-					className={`ml-auto flex items-center gap-2 group ${
-						onCartPage ? 'pointer-events-none opacity-60' : ''
-					}`}
+					aria-current={pathname === '/cart' ? 'page' : undefined}
+					className="ml-auto flex items-center gap-2 group"
 				>
 					{cartBadge}
 					Cart
