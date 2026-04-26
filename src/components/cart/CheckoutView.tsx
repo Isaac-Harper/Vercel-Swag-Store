@@ -13,6 +13,7 @@ import { submitCheckout, type CheckoutState } from '@/actions/checkout'
 import { Required } from '@/components/ui/Required'
 import { usStates } from '@/data/usStates'
 import { formatPrice } from '@/lib/format'
+import type { Cents } from '@/types/money'
 
 function formatCardNumber(value: string) {
 	const digits = value.replace(/\D/g, '').slice(0, 19)
@@ -53,7 +54,7 @@ export function CheckoutView({
 	subtotal,
 	onDoneAction,
 }: {
-	subtotal: number
+	subtotal: Cents
 	onDoneAction: () => void
 }) {
 	const [state, formAction, pending] = useActionState(submitCheckout, initialState)

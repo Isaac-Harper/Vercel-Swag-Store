@@ -3,10 +3,11 @@ import 'server-only'
 import { cacheLife, cacheTag } from 'next/cache'
 import { z } from 'zod'
 import { apiFetch, ApiError } from '@/lib/api/client'
-import { apiProductSchema, getProduct, getProductStockCached } from '@/lib/api/products'
+import { apiProductSchema, centsSchema, getProduct, getProductStockCached } from '@/lib/api/products'
 import { clearCartToken, getCartToken, setCartToken } from '@/lib/cart'
 import type { AddToCartRequest, CartResponse, UpdateCartItemRequest } from '@/types/api'
 import type { CartItem, CartItemWithProduct, CartWithProducts } from '@/types/cart'
+import { type Cents, cents } from '@/types/money'
 
 /**
  * Cart API client. Uses x-cart-token to identify the user's cart on the backend.
@@ -27,14 +28,14 @@ const apiCartLineSchema = z.object({
 	quantity: z.number(),
 	addedAt: z.string(),
 	product: apiProductSchema,
-	lineTotal: z.number(),
+	lineTotal: centsSchema,
 }) satisfies z.ZodType<CartItemWithProduct>
 
 const apiCartSchema = z.object({
 	token: z.string(),
 	items: z.array(apiCartLineSchema),
 	totalItems: z.number(),
-	subtotal: z.number(),
+	subtotal: centsSchema,
 	currency: z.string(),
 	createdAt: z.string(),
 	updatedAt: z.string(),
@@ -90,7 +91,7 @@ export function cartCacheTag(token: string): string {
 type CartSnapshot = {
 	items: CartItem[]
 	totalItems: number
-	subtotal: number
+	subtotal: Cents
 }
 
 /**
@@ -125,7 +126,7 @@ async function fetchCartByToken(token: string): Promise<CartSnapshot | null> {
 }
 
 async function getCartSnapshot(): Promise<CartSnapshot> {
-	const empty: CartSnapshot = { items: [], totalItems: 0, subtotal: 0 }
+	const empty: CartSnapshot = { items: [], totalItems: 0, subtotal: cents(0) }
 	const token = await getCartToken()
 	if (!token) return empty
 	const snapshot = await fetchCartByToken(token)

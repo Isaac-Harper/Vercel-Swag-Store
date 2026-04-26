@@ -1,29 +1,30 @@
+import type { Cents } from '@/types/money'
 import type { Product } from '@/types/product'
 
 /**
  * Cart line as returned by the cart API. Inlines the full product so a single
  * `/cart` call has everything the UI needs to render — no follow-up product
- * lookup. `lineTotal` is `product.price * quantity`, in cents.
+ * lookup.
  */
 export type CartItemWithProduct = {
 	productId: string
 	quantity: number
 	addedAt: string
 	product: Product
-	lineTotal: number
+	lineTotal: Cents
 }
 
 /**
  * Full cart envelope as returned by `/cart`. `subtotal` and `totalItems` are
- * server-computed snapshots in cents / count. Use them in places that render
- * directly from the API response; in optimistic UIs, prefer reducing over
- * `items` since these go stale during in-flight mutations.
+ * server-computed snapshots. Use them in places that render directly from the
+ * API response; in optimistic UIs, prefer reducing over `items` since these
+ * go stale during in-flight mutations.
  */
 export type CartWithProducts = {
 	token: string
 	items: CartItemWithProduct[]
 	totalItems: number
-	subtotal: number
+	subtotal: Cents
 	currency: string
 	createdAt: string
 	updatedAt: string
@@ -41,5 +42,5 @@ export type CartItem = {
 	product: Product
 	quantity: number
 	addedAt: string
-	lineTotal: number
+	lineTotal: Cents
 }

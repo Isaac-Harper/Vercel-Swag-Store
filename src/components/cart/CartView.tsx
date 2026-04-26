@@ -7,6 +7,7 @@ import { useCartCount } from '@/components/cart/CartCountProvider'
 import { useCartStockMap } from '@/components/cart/CartStockProvider'
 import type { CartItem } from '@/types/cart'
 import { formatPrice } from '@/lib/format'
+import { cents } from '@/types/money'
 import {
 	PRODUCT_PLACEHOLDER_BLUR,
 	PRODUCT_PLACEHOLDER_SRC,
@@ -86,9 +87,8 @@ export function CartView({
 
 	// Compute from optimistic quantity rather than the server's `lineTotal` —
 	// the server total is stale while +/- clicks are pending.
-	const subtotal = optimisticItems.reduce(
-		(sum, item) => sum + item.product.price * item.quantity,
-		0,
+	const subtotal = cents(
+		optimisticItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0),
 	)
 
 	return (
@@ -180,7 +180,7 @@ export function CartView({
 													+
 												</button>
 											</div>
-											<p className="text-sm">{formatPrice(product.price * quantity)}</p>
+											<p className="text-sm">{formatPrice(cents(product.price * quantity))}</p>
 										</div>
 									</div>
 								</li>

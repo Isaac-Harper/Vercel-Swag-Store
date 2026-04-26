@@ -5,6 +5,7 @@ import { use } from 'react'
 import { CartStockProvider } from '@/components/cart/CartStockProvider'
 import { CartView } from '@/components/cart/CartView'
 import type { CartItem } from '@/types/cart'
+import { cents } from '@/types/money'
 
 // Heavy form (zod, formatters, useActionState) only matters once the user
 // clicks Checkout. Skip it from the initial cart bundle.
@@ -32,7 +33,7 @@ export function CartBody({
 	// Server-snapshot total — accurate at the moment we render the checkout
 	// view. Once the user mutates the cart in CartView, optimistic updates
 	// take over there.
-	const subtotal = items.reduce((sum, item) => sum + item.lineTotal, 0)
+	const subtotal = cents(items.reduce((sum, item) => sum + item.lineTotal, 0))
 	return view === 'cart' ? (
 		<CartStockProvider stockPromise={stockPromise}>
 			<CartView items={items} onCheckoutAction={onCheckoutAction} />

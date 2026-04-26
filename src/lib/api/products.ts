@@ -4,9 +4,13 @@ import { cacheLife } from 'next/cache'
 import { z } from 'zod'
 import { apiFetch } from '@/lib/api/client'
 import type { ProductListResponse, ProductResponse, StockResponse } from '@/types/api'
+import { type Cents, cents } from '@/types/money'
 import type { PaginationMeta } from '@/types/pagination'
 import type { Product } from '@/types/product'
 import type { StockInfo } from '@/types/stock'
+
+/** Brands a raw API number as `Cents` at the parse boundary. */
+export const centsSchema = z.number().transform((n): Cents => cents(n))
 
 /** Runtime validator that mirrors the `Product` type. Kept in sync by the
  * `satisfies` clause below — adding a field to `Product` without updating the
@@ -16,7 +20,7 @@ export const apiProductSchema = z.object({
 	slug: z.string(),
 	name: z.string(),
 	description: z.string(),
-	price: z.number(),
+	price: centsSchema,
 	currency: z.string(),
 	category: z.string(),
 	images: z.array(z.string()),

@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useProductStockMap } from '@/components/product/ProductStockProvider'
 import { formatPrice } from '@/lib/format'
+import type { Cents } from '@/types/money'
 import {
 	PRODUCT_PLACEHOLDER_BLUR,
 	PRODUCT_PLACEHOLDER_SRC,
@@ -13,7 +14,7 @@ type CardProps = {
 	id: string
 	slug: string
 	name: string
-	price: number
+	price: Cents
 	images: string[]
 	/**
 	 * `true` for above-the-fold cards — sets `priority` on the image so the

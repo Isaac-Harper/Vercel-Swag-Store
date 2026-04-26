@@ -1,9 +1,10 @@
+import type { Cents } from '@/types/money'
+
 const priceFormatter = new Intl.NumberFormat('en-US', {
 	style: 'currency',
 	currency: 'USD',
 })
 
-/** Formats a price given in the smallest currency unit (cents for USD). */
-export function formatPrice(amountInCents: number): string {
-	return priceFormatter.format(amountInCents / 100)
+export function formatPrice(amount: Cents): string {
+	return priceFormatter.format(amount / 100)
 }

@@ -1,5 +1,6 @@
 import 'server-only'
 
+import { cents } from '@/types/money'
 import type { CreateOrderInput, OrderResult } from '@/types/order'
 
 export async function createOrder(input: CreateOrderInput): Promise<OrderResult> {
@@ -20,5 +21,5 @@ export async function createOrder(input: CreateOrderInput): Promise<OrderResult>
 	if (lastDigit % 2 !== 0) {
 		return { status: 'declined', reason: 'Payment declined. Please try a different card.' }
 	}
-	return { status: 'paid', orderId: `mock_${Date.now()}`, total: 0, items: [] }
+	return { status: 'paid', orderId: `mock_${Date.now()}`, total: cents(0), items: [] }
 }

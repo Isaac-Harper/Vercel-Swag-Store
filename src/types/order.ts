@@ -1,4 +1,5 @@
 import type { CartItem } from '@/types/cart'
+import type { Cents } from '@/types/money'
 
 /** Shipping address collected at checkout. Field names mirror the WHATWG
  * autocomplete tokens (`given-name`, `address-line1`, etc.) but in camelCase. */
@@ -34,7 +35,7 @@ export type OrderResult =
 	| {
 			status: 'paid'
 			orderId: string
-			total: number
+			total: Cents
 			items: CartItem[]
 	  }
 	| {
