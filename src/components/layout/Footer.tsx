@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import type { Route } from 'next'
 import type { ComponentType } from 'react'
 import { getStoreConfig } from '@/lib/api/store'
 
@@ -39,7 +40,7 @@ export async function Footer() {
 						{links.map(({ key, href, label, Icon }) => (
 							<li key={key}>
 								<Link
-									href={href}
+									href={href as Route}
 									aria-label={`${label} (opens in new tab)`}
 									target="_blank"
 									rel="noopener noreferrer"

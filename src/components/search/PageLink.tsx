@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import type { Route } from 'next'
 import { useCallback, type AriaAttributes, type MouseEvent, type ReactNode } from 'react'
 import { useSearchNav } from '@/components/search/SearchNavProvider'
 
@@ -44,7 +45,7 @@ export function PageLink({ href, current, disabled, children, ...rest }: Props) 
 	}
 
 	return (
-		<Link href={href} className={className} onClick={onClick} {...rest}>
+		<Link href={href as Route} className={className} onClick={onClick} {...rest}>
 			{children}
 		</Link>
 	)

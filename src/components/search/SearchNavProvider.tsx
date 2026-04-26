@@ -1,5 +1,6 @@
 'use client'
 
+import type { Route } from 'next'
 import { useRouter } from 'next/navigation'
 import {
 	createContext,
@@ -53,7 +54,7 @@ export function SearchNavProvider({ children }: { children: ReactNode }) {
 			// behind the skeleton.
 			window.history.pushState(null, '', href)
 			startTransition(() => {
-				router.push(href, { scroll: false })
+				router.push(href as Route, { scroll: false })
 			})
 		},
 		[router],

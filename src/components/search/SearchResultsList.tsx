@@ -1,3 +1,4 @@
+import type { Route } from 'next'
 import Link from 'next/link'
 import { Card } from '@/components/product/Card'
 import { ProductStockProvider } from '@/components/product/ProductStockProvider'
@@ -37,7 +38,7 @@ export async function SearchResultsList({
 			return (
 				<p className="text-gray-600">
 					Page {page} of {pagination.totalPages} doesn&rsquo;t exist.{' '}
-					<Link href={firstPageHref} className="underline">
+					<Link href={firstPageHref as Route} className="underline">
 						Back to page 1
 					</Link>
 					.

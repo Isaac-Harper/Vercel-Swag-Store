@@ -1,27 +1,26 @@
-import { use, useEffect } from 'react'
+import { createContext, use, useContext, useEffect } from 'react'
+
+type StockMap = Map<string, number>
+
+export const ProductStockSetterContext = createContext<(map: StockMap) => void>(
+	() => {},
+)
 
 /**
- * Suspends on `use(promise)`; on resolve, pushes the resolved map into
- * parent state via `onLoad`. Rendered inside `<ProductStockProvider>`
- * behind a `<Suspense fallback={null}>` so the card grid paints before
- * stock arrives.
- *
- * Intentionally no `'use client'` directive — this is a universal module
- * imported only by the client `<ProductStockProvider>`, so Next treats it
- * as a client-transitive module. That sidesteps Next's serialization
- * check for function props on client entry files and lets us keep the
- * honest `onLoad` name (it's a plain `setState`, not a Server Action).
+ * Suspends on `use(promise)` and writes the resolved map into provider state
+ * via `ProductStockSetterContext`. Rendered inside `<ProductStockProvider>`
+ * behind a `<Suspense fallback={null}>` so the card grid paints before stock
+ * arrives.
  */
 export function ProductStockHydrator({
 	promise,
-	onLoad,
 }: {
-	promise: Promise<Map<string, number>>
-	onLoad: (map: Map<string, number>) => void
+	promise: Promise<StockMap>
 }) {
+	const setStock = useContext(ProductStockSetterContext)
 	const map = use(promise)
 	useEffect(() => {
-		onLoad(map)
-	}, [map, onLoad])
+		setStock(map)
+	}, [map, setStock])
 	return null
 }

@@ -1,7 +1,10 @@
 'use client'
 
 import { createContext, Suspense, useContext, useState, type ReactNode } from 'react'
-import { ProductStockHydrator } from '@/components/product/ProductStockHydrator'
+import {
+	ProductStockHydrator,
+	ProductStockSetterContext,
+} from '@/components/product/ProductStockHydrator'
 
 type StockMap = Map<string, number>
 
@@ -27,10 +30,12 @@ export function ProductStockProvider({
 	const [stock, setStock] = useState<StockMap>(new Map())
 	return (
 		<ProductStockContext value={stock}>
-			{children}
-			<Suspense fallback={null}>
-				<ProductStockHydrator promise={stockPromise} onLoad={setStock} />
-			</Suspense>
+			<ProductStockSetterContext value={setStock}>
+				{children}
+				<Suspense fallback={null}>
+					<ProductStockHydrator promise={stockPromise} />
+				</Suspense>
+			</ProductStockSetterContext>
 		</ProductStockContext>
 	)
 }
