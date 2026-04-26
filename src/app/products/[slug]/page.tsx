@@ -38,6 +38,7 @@ export async function generateMetadata({
 			description: product.description,
 			url,
 			type: 'website',
+			images: [`${url}/opengraph-image`],
 		},
 	}
 }

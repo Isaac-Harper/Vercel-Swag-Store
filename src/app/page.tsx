@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 		description:
 			'Premium swag for developers who build with Vercel. From tees to tech gear, represent the tools you love.',
 		url: '/',
+		images: ['/opengraph-image'],
 	},
 }
 
