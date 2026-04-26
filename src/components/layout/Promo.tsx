@@ -5,11 +5,11 @@ export async function Promo() {
 	if (!promo?.active) return null
 
 	return (
-		<div className="w-full bg-black py-2">
+		<aside aria-label="Promotion" className="w-full bg-black py-2">
 			<p className="text-center text-sm text-white">
 				<span className="font-semibold">{promo.title}</span> — {promo.description}{' '}
 				<span>Code: {promo.code}</span>
 			</p>
-		</div>
+		</aside>
 	)
 }
