@@ -21,7 +21,7 @@ export function Header({ cartBadge }: { cartBadge: ReactNode }) {
 					>
 						<path d="M37.5896 0.25L74.5396 64.25H0.639648L37.5896 0.25Z" fill="currentColor" />
 					</svg>
-					<span className="hidden sm:inline">Swag Store</span>
+					<span className="text-sm sm:text-base">Swag Store</span>
 				</Link>
 				<Link
 					className="text-gray-600 hover:text-gray-800 active:text-black cursor-pointer"
