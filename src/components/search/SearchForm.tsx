@@ -83,6 +83,8 @@ export function SearchForm({
 
 	return (
 		<form
+			role="search"
+			aria-label="Search products"
 			onSubmit={handleSubmit}
 			className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center"
 		>
