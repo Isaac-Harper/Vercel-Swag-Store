@@ -6,8 +6,8 @@ const nextConfig = {
 	// 70ms render-blocking CSS hit is acceptable cost for a stable SEO signal.
 	images: {
 		remotePatterns: [
-			{ hostname: 'cdn.raster.app' },
-			{ hostname: 'rstr.in' },
+			{ protocol: 'https', hostname: 'cdn.raster.app' },
+			{ protocol: 'https', hostname: 'rstr.in' },
 			{ protocol: 'https', hostname: '*.public.blob.vercel-storage.com' },
 		],
 		formats: ['image/avif', 'image/webp'],
