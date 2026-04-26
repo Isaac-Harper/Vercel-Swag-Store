@@ -47,7 +47,7 @@ export function CartDrawer({
 		<Dialog.Root open onOpenChange={handleOpenChange}>
 			<Dialog.Portal>
 				<Dialog.Overlay className="fixed inset-0 z-40 bg-black/40" />
-				<Dialog.Content className="fixed right-0 top-0 z-50 flex h-dvh w-full max-w-md flex-col bg-white text-black shadow-xl outline-none">
+				<Dialog.Content className="fixed right-0 top-0 z-50 flex h-dvh w-full max-w-md flex-col bg-white text-black shadow-xl outline-none md:max-w-lg">
 					<Dialog.Description className="sr-only">
 						{view === 'cart'
 							? 'Review the items in your cart and continue to checkout.'
