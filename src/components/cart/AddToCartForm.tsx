@@ -1,7 +1,12 @@
 'use client'
 
-import { addToCart } from '@/actions/cart'
+import { useActionState } from 'react'
+import { addToCart, type AddToCartState } from '@/actions/cart'
 import { useCartCount } from '@/components/cart/CartCountProvider'
+
+const ERROR_MESSAGES: Record<Exclude<AddToCartState, null | { ok: true }>['reason'], string> = {
+	'unknown-product': 'This product is no longer available. Try refreshing the page.',
+}
 
 export function AddToCartForm({
 	slug,
@@ -12,38 +17,50 @@ export function AddToCartForm({
 }) {
 	const { addOptimistic } = useCartCount()
 	const outOfStock = stock <= 0
+	const [state, formAction] = useActionState<AddToCartState, FormData>(
+		addToCart.bind(null, slug),
+		null,
+	)
+	const errorMessage = state && !state.ok ? ERROR_MESSAGES[state.reason] : null
 
-	async function handleAction(formData: FormData) {
+	function handleAction(formData: FormData) {
 		const raw = Number(formData.get('quantity') ?? 1)
 		const requested = Number.isFinite(raw) ? Math.max(1, Math.floor(raw)) : 1
 		const quantity = Math.min(requested, stock)
 		if (quantity <= 0) return
 		addOptimistic(quantity)
-		await addToCart(slug, formData)
+		formAction(formData)
 	}
 
 	return (
-		<form action={handleAction} className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end">
-			<label htmlFor="cart-qty" className="flex flex-col gap-1">
-				<span className="form-label">Qty</span>
-				<input
-					id="cart-qty"
-					name="quantity"
-					type="number"
-					min={1}
-					max={stock || 1}
-					defaultValue={1}
+		<form action={handleAction} className="mt-4 flex flex-col gap-3">
+			<div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+				<label htmlFor="cart-qty" className="flex flex-col gap-1">
+					<span className="form-label">Qty</span>
+					<input
+						id="cart-qty"
+						name="quantity"
+						type="number"
+						min={1}
+						max={stock || 1}
+						defaultValue={1}
+						disabled={outOfStock}
+						className="form-input w-20 disabled:cursor-not-allowed disabled:opacity-50"
+					/>
+				</label>
+				<button
+					type="submit"
 					disabled={outOfStock}
-					className="form-input w-20 disabled:cursor-not-allowed disabled:opacity-50"
-				/>
-			</label>
-			<button
-				type="submit"
-				disabled={outOfStock}
-				className="w-full cursor-pointer rounded bg-black py-3 text-sm font-medium text-white transition hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:opacity-100 sm:w-auto sm:px-8"
-			>
-				{outOfStock ? 'Out of stock' : 'Add to cart'}
-			</button>
+					className="w-full cursor-pointer rounded bg-black py-3 text-sm font-medium text-white transition hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:opacity-100 sm:w-auto sm:px-8"
+				>
+					{outOfStock ? 'Out of stock' : 'Add to cart'}
+				</button>
+			</div>
+			{errorMessage ? (
+				<p role="alert" className="text-sm text-red-600">
+					{errorMessage}
+				</p>
+			) : null}
 		</form>
 	)
 }

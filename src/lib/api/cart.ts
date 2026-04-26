@@ -160,14 +160,16 @@ export async function getCartStockMap(): Promise<Map<string, number>> {
 	return new Map(entries)
 }
 
-export async function addToCart(slug: string, quantity: number): Promise<void> {
-	if (quantity <= 0) return
+export type AddToCartResult = { ok: true } | { ok: false; reason: 'unknown-product' }
+
+export async function addToCart(slug: string, quantity: number): Promise<AddToCartResult> {
+	if (quantity <= 0) return { ok: true }
 	// Backend's POST /cart accepts productId. Our slug-based actions hand us a
 	// slug — look up the product to get its id. Parallel with `ensureToken` since
 	// the two are independent (worst case: an invalid slug spawned a fresh cart
 	// for an existing user — minor cost vs. the saved round-trip).
 	const [product, token] = await Promise.all([getProduct(slug), ensureToken()])
-	if (!product) return
+	if (!product) return { ok: false, reason: 'unknown-product' }
 	const body: AddToCartRequest = { productId: product.id, quantity }
 	try {
 		await apiFetch('/cart', {
@@ -187,6 +189,7 @@ export async function addToCart(slug: string, quantity: number): Promise<void> {
 			body: JSON.stringify(body),
 		})
 	}
+	return { ok: true }
 }
 
 export async function updateCartItem(productId: string, quantity: number): Promise<void> {

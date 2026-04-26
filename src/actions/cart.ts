@@ -10,11 +10,18 @@ async function revalidateCart() {
 	revalidatePath('/', 'layout')
 }
 
-export async function addToCart(slug: string, formData: FormData) {
+export type AddToCartState = { ok: true } | { ok: false; reason: 'unknown-product' } | null
+
+export async function addToCart(
+	slug: string,
+	_prev: AddToCartState,
+	formData: FormData,
+): Promise<AddToCartState> {
 	const raw = Number(formData.get('quantity') ?? 1)
 	const quantity = Number.isFinite(raw) ? Math.max(1, Math.floor(raw)) : 1
-	await cartApi.addToCart(slug, quantity)
-	await revalidateCart()
+	const result = await cartApi.addToCart(slug, quantity)
+	if (result.ok) await revalidateCart()
+	return result
 }
 
 export async function updateCartQuantity(itemId: string, quantity: number) {
