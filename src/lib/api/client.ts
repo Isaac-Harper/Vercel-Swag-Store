@@ -43,8 +43,6 @@ export type FetchOptions = RequestInit & {
 }
 
 export async function apiFetch<T>(path: string, options: FetchOptions = {}): Promise<T> {
-	// TODO: retry on 5xx with exponential backoff
-	// TODO: report errors to telemetry
 	const { params, headers, ...init } = options
 	// `apiFetch` is server-only — `API_URL` is always absolute, so no base needed.
 	const url = new URL(`${API_URL}${path}`)
