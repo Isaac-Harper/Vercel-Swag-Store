@@ -38,6 +38,7 @@ export function GET() {
 		'User-agent: *',
 		'Allow: /',
 		'Disallow: /cart',
+		'Disallow: /md',
 		'',
 		// Cloudflare's Content-Signal proposal — declarative AI-usage prefs for
 		// bots that don't (yet) match a per-UA rule above.
