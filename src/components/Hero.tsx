@@ -1,10 +1,11 @@
+import type { Route } from 'next'
 import Link from 'next/link'
 
 type HeroProps = {
 	heading: string
 	subheading: string
 	buttonText: string
-	buttonLink: string
+	buttonLink: Route
 }
 
 export function Hero({ heading, subheading, buttonText, buttonLink }: HeroProps) {
