@@ -149,7 +149,10 @@ export function CartView({
 									</div>
 									<div className="flex flex-1 flex-col justify-between">
 										<div className="flex items-start justify-between gap-2">
-											<h3 className="font-medium">{product.name}</h3>
+											<div>
+												<h3 className="font-medium">{product.name}</h3>
+												<p className="text-sm text-gray-500">{formatPrice(cents(product.price))}</p>
+											</div>
 											<button
 												type="button"
 												onClick={remove}
