@@ -1,13 +1,12 @@
 'use server'
-
-import { revalidatePath, updateTag } from 'next/cache'
+ 
+import { updateTag } from 'next/cache'
 import * as cartApi from '@/lib/api/cart'
 import { getCartToken } from '@/lib/cart'
 
 async function revalidateCart() {
 	const token = await getCartToken()
 	if (token) updateTag(cartApi.cartCacheTag(token))
-	revalidatePath('/', 'layout')
 }
 
 export type AddToCartState = { ok: true } | { ok: false; reason: 'unknown-product' } | null
