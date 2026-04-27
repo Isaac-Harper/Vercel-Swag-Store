@@ -62,7 +62,7 @@ export function Card({ id, slug, name, price, images, priority }: CardProps) {
 						</span>
 					)}
 				</div>
-				<div className="flex items-center justify-between">
+				<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
 					<h3 className="font-medium group-hover:underline">{name}</h3>
 					<p className="text-sm">{formatPrice(price)}</p>
 				</div>
