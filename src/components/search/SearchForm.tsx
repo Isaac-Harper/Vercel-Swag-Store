@@ -28,9 +28,21 @@ export function SearchForm({
 	const pathname = usePathname()
 	const params = useSearchParams()
 	const { startNav, isPending } = useSearchNav()
-	const [q, setQ] = useState(params.get('q') ?? '')
-	const [category, setCategory] = useState(params.get('category') ?? '')
+	const qFromUrl = params.get('q') ?? ''
+	const categoryFromUrl = params.get('category') ?? ''
+	const [q, setQ] = useState(qFromUrl)
+	const [category, setCategory] = useState(categoryFromUrl)
 	const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+	// Resync inputs when the URL changes from outside the form (e.g. nav back
+	// to /search after leaving). Without this, useState's one-time init keeps
+	// stale values while the address bar shows clean params.
+	useEffect(() => {
+		setQ(qFromUrl)
+	}, [qFromUrl])
+	useEffect(() => {
+		setCategory(categoryFromUrl)
+	}, [categoryFromUrl])
 
 	useEffect(
 		() => () => {
