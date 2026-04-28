@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { Card } from '@/components/product/Card'
-import { ProductStockProvider } from '@/components/product/ProductStockProvider'
-import { getListingStockMap, listProducts } from '@/lib/api/products'
+import { listProducts } from '@/lib/api/products'
 
 const PRIORITY_COUNT = 2
 const MIN_COUNT = 6
@@ -16,9 +15,6 @@ export async function Featured() {
 		const seen = new Set(featured.map((p) => p.id))
 		products = [...featured, ...fill.filter((p) => !seen.has(p.id))].slice(0, MIN_COUNT)
 	}
-	// Unawaited — feeds `<ProductStockProvider>` which paints cards on the
-	// products fetch and streams stock badges in under its own Suspense.
-	const stockPromise = getListingStockMap(products.map((p) => p.id))
 	return (
 		<section className="px-4 py-16">
 			<div className="mx-auto max-w-6xl">
@@ -31,13 +27,11 @@ export async function Featured() {
 						View all
 					</Link>
 				</div>
-				<ProductStockProvider stockPromise={stockPromise}>
-					<ul className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
-						{products.map((product, i) => (
-							<Card key={product.slug} {...product} priority={i < PRIORITY_COUNT} />
-						))}
-					</ul>
-				</ProductStockProvider>
+				<ul className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+					{products.map((product, i) => (
+						<Card key={product.slug} {...product} priority={i < PRIORITY_COUNT} />
+					))}
+				</ul>
 			</div>
 		</section>
 	)

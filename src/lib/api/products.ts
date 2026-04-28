@@ -123,11 +123,11 @@ export async function getProductStock(slugOrId: string): Promise<StockInfo | nul
 }
 
 /**
- * Hour-cached stock lookup used by every UI surface: featured, search,
- * detail page, and the cart drawer. One shared cache entry per productId
- * means all surfaces agree on the displayed value for the TTL window —
- * important because the `/stock` endpoint returns a random value per call,
- * so any shorter TTL produces jarring drift across pages.
+ * Hour-cached stock lookup used by the detail page and cart drawer. One
+ * shared cache entry per productId means surfaces agree on the displayed
+ * value for the TTL window — important because the `/stock` endpoint
+ * returns a random value per call, so any shorter TTL produces jarring
+ * drift across pages.
  *
  * Checkout MUST use uncached `getProductStock` for an authoritative read
  * at charge time.
@@ -137,23 +137,4 @@ export async function getProductStockCached(slugOrId: string): Promise<StockInfo
 
 	cacheLife('hours')
 	return getProductStock(slugOrId)
-}
-
-/**
- * `productId -> stock` for a set of listed products. Pass the unawaited
- * promise to `<ProductStockProvider>` so the card grid paints on the product
- * list fetch and stock badges stream in behind their own Suspense. Missing
- * entries = stock unknown.
- */
-export async function getListingStockMap(
-	productIds: readonly string[],
-): Promise<Map<string, number>> {
-	if (productIds.length === 0) return new Map()
-	const stocks = await Promise.all(productIds.map((id) => getProductStockCached(id)))
-	const entries: [string, number][] = []
-	productIds.forEach((id, i) => {
-		const s = stocks[i]?.stock
-		if (typeof s === 'number') entries.push([id, s])
-	})
-	return new Map(entries)
 }

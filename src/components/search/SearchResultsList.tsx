@@ -1,8 +1,7 @@
 import type { Route } from 'next'
 import Link from 'next/link'
 import { Card } from '@/components/product/Card'
-import { ProductStockProvider } from '@/components/product/ProductStockProvider'
-import { getListingStockMap, listProductsPaginated } from '@/lib/api/products'
+import { listProductsPaginated } from '@/lib/api/products'
 
 export const PAGE_SIZE = 5
 
@@ -52,22 +51,16 @@ export async function SearchResultsList({
 		)
 	}
 
-	// Unawaited — the card grid paints on the products fetch; badges stream
-	// in via `<ProductStockProvider>` once the stock map resolves.
-	const stockPromise = getListingStockMap(results.map((p) => p.id))
-
 	const start = (page - 1) * PAGE_SIZE + 1
 	const end = start + results.length - 1
 
 	return (
 		<>
-			<ProductStockProvider stockPromise={stockPromise}>
-				<ul className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
-					{results.map((product) => (
-						<Card key={product.slug} {...product} />
-					))}
-				</ul>
-			</ProductStockProvider>
+			<ul className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+				{results.map((product) => (
+					<Card key={product.slug} {...product} />
+				))}
+			</ul>
 			<p className="mt-4 text-xs text-gray-500">
 				Showing {start}–{end} of {pagination.total} results.
 			</p>
