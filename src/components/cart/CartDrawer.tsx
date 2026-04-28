@@ -2,7 +2,7 @@
 
 import * as Dialog from '@radix-ui/react-dialog'
 import { useRouter } from 'next/navigation'
-import { Suspense, useCallback, useState } from 'react'
+import { Suspense, useCallback, useState, type AnimationEvent } from 'react'
 import { CartBody, type CartViewMode } from '@/components/cart/CartBody'
 import { CartItemsSkeleton } from '@/components/cart/CartItemsSkeleton'
 import type { CartItem } from '@/types/cart'
@@ -16,17 +16,14 @@ export function CartDrawer({
 }) {
 	const router = useRouter()
 	const [view, setView] = useState<CartViewMode>('cart')
+	// Controlled so the slide-out keyframes can run before we tear down the
+	// modal route. `handleContentAnimationEnd` calls `router.back()` once the
+	// closed-state animation finishes.
+	const [open, setOpen] = useState(true)
 
-	const close = useCallback(() => {
-		// Reset view BEFORE navigating away. If Next.js's router cache keeps
-		// this drawer tree alive across open/close, the next open lands on
-		// `<CartView>` and `<CheckoutView>` is unmounted — discarding any
-		// stale `state.ok` from a previous successful order. (If the tree is
-		// fully unmounted instead, this is a harmless no-op since `useState`
-		// re-initializes to `'cart'` anyway.)
-		setView('cart')
-		router.back()
-	}, [router])
+	const requestClose = useCallback(() => {
+		setOpen(false)
+	}, [])
 
 	const backToCart = useCallback(() => {
 		setView('cart')
@@ -36,18 +33,34 @@ export function CartDrawer({
 		setView('checkout')
 	}, [])
 
-	const handleOpenChange = useCallback(
-		(open: boolean) => {
-			if (!open) close()
+	const handleOpenChange = useCallback((next: boolean) => {
+		if (!next) setOpen(false)
+	}, [])
+
+	const handleContentAnimationEnd = useCallback(
+		(event: AnimationEvent<HTMLDivElement>) => {
+			if (event.target !== event.currentTarget) return
+			if (event.currentTarget.dataset.state !== 'closed') return
+			// Reset view BEFORE navigating away. If Next.js's router cache keeps
+			// this drawer tree alive across open/close, the next open lands on
+			// `<CartView>` and `<CheckoutView>` is unmounted — discarding any
+			// stale `state.ok` from a previous successful order. (If the tree is
+			// fully unmounted instead, this is a harmless no-op since `useState`
+			// re-initializes to `'cart'` anyway.)
+			setView('cart')
+			router.back()
 		},
-		[close],
+		[router],
 	)
 
 	return (
-		<Dialog.Root open onOpenChange={handleOpenChange}>
+		<Dialog.Root open={open} onOpenChange={handleOpenChange}>
 			<Dialog.Portal>
-				<Dialog.Overlay className="fixed inset-0 z-40 bg-black/40" />
-				<Dialog.Content className="fixed right-0 top-0 z-50 flex h-dvh w-full max-w-md flex-col bg-white text-black shadow-xl outline-none md:max-w-lg">
+				<Dialog.Overlay className="fixed inset-0 z-40 bg-black/40 data-[state=closed]:animate-cart-overlay-out data-[state=open]:animate-cart-overlay-in" />
+				<Dialog.Content
+					onAnimationEnd={handleContentAnimationEnd}
+					className="fixed right-0 top-0 z-50 flex h-dvh w-full max-w-md flex-col bg-white text-black shadow-xl outline-none data-[state=closed]:animate-cart-slide-out data-[state=open]:animate-cart-slide-in md:max-w-lg"
+				>
 					<Dialog.Description className="sr-only">
 						{view === 'cart'
 							? 'Review the items in your cart and continue to checkout.'
@@ -91,7 +104,7 @@ export function CartDrawer({
 							stockPromise={stockPromise}
 							view={view}
 							onCheckoutAction={goToCheckout}
-							onDoneAction={close}
+							onDoneAction={requestClose}
 						/>
 					</Suspense>
 				</Dialog.Content>

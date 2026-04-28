@@ -16,6 +16,46 @@
 	--font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
+@theme {
+	--animate-cart-slide-in: cart-slide-in 300ms cubic-bezier(0.86, 0, 0.07, 1);
+	--animate-cart-slide-out: cart-slide-out 300ms cubic-bezier(0.86, 0, 0.07, 1);
+	--animate-cart-overlay-in: cart-overlay-in 200ms ease-out;
+	--animate-cart-overlay-out: cart-overlay-out 200ms ease-out;
+
+	@keyframes cart-slide-in {
+		from {
+			transform: translateX(100%);
+		}
+		to {
+			transform: translateX(0);
+		}
+	}
+	@keyframes cart-slide-out {
+		from {
+			transform: translateX(0);
+		}
+		to {
+			transform: translateX(100%);
+		}
+	}
+	@keyframes cart-overlay-in {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+	@keyframes cart-overlay-out {
+		from {
+			opacity: 1;
+		}
+		to {
+			opacity: 0;
+		}
+	}
+}
+
 :root {
 	--foreground: 0 0% 100%;
 	--background: 0 0% 0%;
