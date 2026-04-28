@@ -12,7 +12,7 @@ export function FeaturedSkeleton() {
 				<ul className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
 					{['a', 'b', 'c', 'd', 'e', 'f'].map((k) => (
 						<li key={k} className="flex flex-col gap-3">
-							<div className="relative w-full animate-pulse pb-[100%]">
+							<div className="relative w-full pb-[100%]">
 								{/* Same placeholder the Card shows while images load —
 								    keeps skeleton → real-card transition smooth. */}
 								<Image
