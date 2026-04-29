@@ -30,6 +30,38 @@ test.describe('Agent-friendly endpoints', () => {
 		expect(res.headers()['content-type']).toContain('text/html')
 	})
 
+	test('Accept q-values: html wins when its q is higher than markdown', async ({ request }) => {
+		const res = await request.get('/', {
+			headers: { Accept: 'text/markdown;q=0.1, text/html;q=0.9' },
+		})
+		expect(res.status()).toBe(200)
+		expect(res.headers()['content-type']).toContain('text/html')
+	})
+
+	test('Accept q-values: markdown wins when its q is higher than html', async ({ request }) => {
+		const res = await request.get('/', {
+			headers: { Accept: 'text/html;q=0.5, text/markdown' },
+		})
+		expect(res.status()).toBe(200)
+		expect(res.headers()['content-type']).toContain('text/markdown')
+	})
+
+	test('Accept q-values: tie breaks toward html', async ({ request }) => {
+		const res = await request.get('/', {
+			headers: { Accept: 'text/html, text/markdown' },
+		})
+		expect(res.status()).toBe(200)
+		expect(res.headers()['content-type']).toContain('text/html')
+	})
+
+	test('Accept wildcard does not trigger markdown switching', async ({ request }) => {
+		// `*/*` should not opt the client into markdown — only an explicit
+		// `text/markdown` mention does.
+		const res = await request.get('/', { headers: { Accept: '*/*' } })
+		expect(res.status()).toBe(200)
+		expect(res.headers()['content-type']).toContain('text/html')
+	})
+
 	test('product detail markdown includes price and HTML version link', async ({ request }) => {
 		// Discover a real slug from the homepage HTML so the test isn't tied to
 		// any specific product fixture.
