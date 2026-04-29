@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useOptimistic, useRef, useState, useTransition } from 'react'
+import { useEffect, useOptimistic, useRef, useState, useTransition } from 'react'
 import { removeFromCart, updateCartQuantity } from '@/actions/cart'
 import { useCartCount } from '@/components/cart/CartCountProvider'
 import { useCartStockMap } from '@/components/cart/CartStockProvider'
@@ -49,6 +49,28 @@ export function CartView({
 	const [pendingCount, setPendingCount] = useState(0)
 	const isFlushing = pendingCount > 0
 
+	// Quantities the user has committed (post-API-call) that haven't yet
+	// reflected in the `items` prop. Server revalidation flows back via
+	// Suspense after the action's `await` resolves, so without tracking this
+	// we'd let the user open Checkout while `items` is one revision behind —
+	// CartBody would then hand a stale subtotal to CheckoutView.
+	const [unsynced, setUnsynced] = useState<Map<string, number>>(new Map())
+	useEffect(() => {
+		setUnsynced((prev) => {
+			if (prev.size === 0) return prev
+			const next = new Map<string, number>()
+			let pruned = false
+			prev.forEach((qty, id) => {
+				const item = items.find((i) => i.id === id)
+				const synced = qty <= 0 ? item === undefined : item?.quantity === qty
+				if (synced) pruned = true
+				else next.set(id, qty)
+			})
+			return pruned ? next : prev
+		})
+	}, [items])
+	const isSyncing = isFlushing || unsynced.size > 0
+
 	function scheduleSend(id: string, target: number): Promise<void> {
 		const existing = pendingRef.current.get(id)
 		if (existing) {
@@ -76,6 +98,9 @@ export function CartView({
 				}
 				if (lastOk) setError(null)
 				else setError("Couldn't update your cart. Please try again.")
+				// Mark this id's committed quantity as awaiting reflection in `items`.
+				// The `useEffect` above prunes the entry once revalidation lands.
+				setUnsynced((prev) => new Map(prev).set(id, lastSent))
 				pendingRef.current.delete(id)
 			} finally {
 				setPendingCount((n) => n - 1)
@@ -209,9 +234,9 @@ export function CartView({
 					type="button"
 					onClick={onCheckoutAction}
 					className="w-full cursor-pointer rounded bg-black py-3 text-sm font-medium text-white transition hover:opacity-80 active:opacity-60 disabled:cursor-not-allowed disabled:opacity-50"
-					disabled={optimisticItems.length === 0 || isFlushing}
+					disabled={optimisticItems.length === 0 || isSyncing}
 				>
-					{isFlushing ? 'Updating cart…' : 'Checkout'}
+					{isSyncing ? 'Updating cart…' : 'Checkout'}
 				</button>
 			</div>
 		</>
