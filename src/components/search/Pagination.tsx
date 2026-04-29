@@ -18,12 +18,7 @@ type Props = {
  * highlighted cell updates the instant `<SearchNavProvider>` calls
  * `history.pushState`, rather than waiting for the RSC transition to commit.
  */
-export function Pagination({
-	pathname,
-	baseParams,
-	totalPages,
-	pageParam = 'page',
-}: Props) {
+export function Pagination({ pathname, baseParams, totalPages, pageParam = 'page' }: Props) {
 	const searchParams = useSearchParams()
 	const { pendingHref } = useSearchNav()
 	// Prefer the optimistic `pendingHref` set by `startNav` — `useSearchParams`
@@ -36,7 +31,7 @@ export function Pagination({
 	const parsed = Number.parseInt(raw, 10)
 	const currentPage = Math.min(
 		Math.max(1, Number.isFinite(parsed) ? parsed : 1),
-		Math.max(1, totalPages),
+		Math.max(1, totalPages)
 	)
 
 	if (totalPages <= 1) return null
@@ -53,15 +48,8 @@ export function Pagination({
 	const hasNext = currentPage < totalPages
 
 	return (
-		<nav
-			aria-label="Search results pages"
-			className="mt-8 flex items-center justify-center gap-1"
-		>
-			<PageLink
-				href={buildHref(currentPage - 1)}
-				disabled={!hasPrev}
-				aria-label="Previous page"
-			>
+		<nav aria-label="Search results pages" className="mt-8 flex items-center justify-center gap-1">
+			<PageLink href={buildHref(currentPage - 1)} disabled={!hasPrev} aria-label="Previous page">
 				&larr;
 			</PageLink>
 			{pages.map((p, i) =>
@@ -70,7 +58,7 @@ export function Pagination({
 						// eslint-disable-next-line react/no-array-index-key
 						key={`gap-${i}`}
 						aria-hidden
-						className="px-2 text-sm text-gray-400"
+						className="px-2 text-sm text-gray-600"
 					>
 						…
 					</span>
@@ -84,13 +72,9 @@ export function Pagination({
 					>
 						{p}
 					</PageLink>
-				),
+				)
 			)}
-			<PageLink
-				href={buildHref(currentPage + 1)}
-				disabled={!hasNext}
-				aria-label="Next page"
-			>
+			<PageLink href={buildHref(currentPage + 1)} disabled={!hasNext} aria-label="Next page">
 				&rarr;
 			</PageLink>
 		</nav>

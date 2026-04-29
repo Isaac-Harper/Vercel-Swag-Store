@@ -33,14 +33,14 @@ const CartCountContext = createContext<CartCountContextValue | null>(null)
 export function CartCountProvider({ children }: { children: ReactNode }) {
 	const [delta, addOptimisticInternal] = useOptimistic(
 		0,
-		(state: number, amount: number) => state + amount,
+		(state: number, amount: number) => state + amount
 	)
 
 	const addOptimistic = useCallback(
 		(amount: number) => {
 			addOptimisticInternal(amount)
 		},
-		[addOptimisticInternal],
+		[addOptimisticInternal]
 	)
 
 	const previousCount = useRef<number | null>(null)
@@ -55,7 +55,7 @@ export function CartCountProvider({ children }: { children: ReactNode }) {
 
 	const value = useMemo(
 		() => ({ delta, addOptimistic, reportCount }),
-		[delta, addOptimistic, reportCount],
+		[delta, addOptimistic, reportCount]
 	)
 
 	return (

@@ -7,7 +7,7 @@
  */
 export function PaginationSkeleton() {
 	const cellClass =
-		'flex h-9 min-w-9 items-center justify-center rounded border border-gray-200 px-3 text-sm text-gray-400'
+		'flex h-9 min-w-9 items-center justify-center rounded border border-gray-200 px-3 text-sm text-gray-600'
 	return (
 		<nav
 			aria-label="Search results pages"

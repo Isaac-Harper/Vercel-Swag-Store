@@ -10,7 +10,7 @@ import { cents } from '@/types/money'
 // Heavy form (zod, formatters, useActionState) only matters once the user
 // clicks Checkout. Skip it from the initial cart bundle.
 const CheckoutView = dynamic(() =>
-	import('@/components/cart/CheckoutView').then((m) => m.CheckoutView),
+	import('@/components/cart/CheckoutView').then((m) => m.CheckoutView)
 )
 
 export type CartViewMode = 'cart' | 'checkout'

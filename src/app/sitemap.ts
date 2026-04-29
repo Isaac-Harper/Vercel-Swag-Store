@@ -11,7 +11,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 	const products = await listProducts()
 	const staticPaths: MetadataRoute.Sitemap = [
 		{ url: `${SITE_URL}/`, lastModified: BUILD_TIME, changeFrequency: 'weekly', priority: 1 },
-		{ url: `${SITE_URL}/search`, lastModified: BUILD_TIME, changeFrequency: 'weekly', priority: 0.8 },
+		{
+			url: `${SITE_URL}/search`,
+			lastModified: BUILD_TIME,
+			changeFrequency: 'weekly',
+			priority: 0.8,
+		},
 	]
 	const productPaths: MetadataRoute.Sitemap = products.map((p) => ({
 		url: `${SITE_URL}/products/${p.slug}`,

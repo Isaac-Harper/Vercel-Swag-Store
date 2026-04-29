@@ -1,4 +1,4 @@
- import 'server-only'
+import 'server-only'
 
 /**
  * Base HTTP client for backend API calls.
@@ -12,8 +12,7 @@
 import { z } from 'zod'
 import type { ErrorResponse } from '@/types/api'
 
-const API_URL =
-	process.env.PRODUCTS_API_URL ?? 'https://vercel-swag-store-api.vercel.app/api'
+const API_URL = process.env.PRODUCTS_API_URL ?? 'https://vercel-swag-store-api.vercel.app/api'
 const BYPASS_TOKEN = process.env.VERCEL_API_BYPASS_TOKEN
 
 const errorResponseSchema = z.object({
@@ -76,7 +75,7 @@ export async function apiFetch<T>(path: string, options: FetchOptions = {}): Pro
 		throw new ApiError(
 			res.status,
 			`${init.method ?? 'GET'} ${path} → ${res.status} ${summary}`,
-			body,
+			body
 		)
 	}
 

@@ -2,10 +2,7 @@ import { markdownResponse, productDetailMarkdown } from '@/lib/markdown'
 import { getProduct, getProductStockCached } from '@/lib/api/products'
 import { SITE_URL } from '@/lib/site'
 
-export async function GET(
-	_request: Request,
-	{ params }: { params: Promise<{ slug: string }> },
-) {
+export async function GET(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
 	const { slug } = await params
 	const product = await getProduct(slug)
 	if (!product) {

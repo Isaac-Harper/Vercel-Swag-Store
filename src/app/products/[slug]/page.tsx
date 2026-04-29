@@ -7,10 +7,7 @@ import { ProductStockAndCart } from '@/components/product/ProductStockAndCart'
 import { ProductStockAndCartSkeleton } from '@/components/product/ProductStockAndCartSkeleton'
 import { getProduct, getProductStockCached, listProducts } from '@/lib/api/products'
 import { formatPrice } from '@/lib/format'
-import {
-	PRODUCT_PLACEHOLDER_BLUR,
-	PRODUCT_PLACEHOLDER_SRC,
-} from '@/lib/image-placeholder'
+import { PRODUCT_PLACEHOLDER_BLUR, PRODUCT_PLACEHOLDER_SRC } from '@/lib/image-placeholder'
 import { SITE_URL } from '@/lib/site'
 
 export async function generateStaticParams() {
@@ -41,11 +38,7 @@ export async function generateMetadata({
 	}
 }
 
-export default async function ProductDetailPage({
-	params,
-}: {
-	params: Promise<{ slug: string }>
-}) {
+export default async function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
 	const { slug } = await params
 	const product = await getProduct(slug)
 	if (!product) notFound()
@@ -68,9 +61,7 @@ export default async function ProductDetailPage({
 			priceCurrency: product.currency,
 			price: product.price / 100,
 			availability:
-				stockInfo?.stock === 0
-					? 'https://schema.org/OutOfStock'
-					: 'https://schema.org/InStock',
+				stockInfo?.stock === 0 ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
 		},
 	}
 
@@ -92,9 +83,7 @@ export default async function ProductDetailPage({
 						/>
 					</div>
 					<div className="flex flex-col gap-4">
-						<p className="text-xs uppercase tracking-wide text-gray-500">
-							{product.category}
-						</p>
+						<p className="text-xs uppercase tracking-wide text-gray-500">{product.category}</p>
 						<h1 className="text-3xl font-bold">{product.name}</h1>
 						<p className="text-2xl">{formatPrice(product.price)}</p>
 						<p className="text-base text-gray-700">{product.description}</p>

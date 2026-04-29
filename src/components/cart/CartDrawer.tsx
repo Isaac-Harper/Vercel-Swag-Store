@@ -40,7 +40,7 @@ export function CartDrawer({
 		(open: boolean) => {
 			if (!open) close()
 		},
-		[close],
+		[close]
 	)
 
 	return (

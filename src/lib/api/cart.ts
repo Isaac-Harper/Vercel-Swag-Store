@@ -3,7 +3,12 @@ import 'server-only'
 import { cacheLife, cacheTag } from 'next/cache'
 import { z } from 'zod'
 import { apiFetch, ApiError } from '@/lib/api/client'
-import { apiProductSchema, centsSchema, getProduct, getProductStockCached } from '@/lib/api/products'
+import {
+	apiProductSchema,
+	centsSchema,
+	getProduct,
+	getProductStockCached,
+} from '@/lib/api/products'
 import { clearCartToken, getCartToken, setCartToken } from '@/lib/cart'
 import type { AddToCartRequest, CartResponse, UpdateCartItemRequest } from '@/types/api'
 import type { CartItem, CartItemWithProduct, CartWithProducts } from '@/types/cart'

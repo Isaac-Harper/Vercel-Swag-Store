@@ -2,10 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/format'
 import type { Cents } from '@/types/money'
-import {
-	PRODUCT_PLACEHOLDER_BLUR,
-	PRODUCT_PLACEHOLDER_SRC,
-} from '@/lib/image-placeholder'
+import { PRODUCT_PLACEHOLDER_BLUR, PRODUCT_PLACEHOLDER_SRC } from '@/lib/image-placeholder'
 
 type CardProps = {
 	id: string

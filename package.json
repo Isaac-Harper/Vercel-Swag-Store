@@ -1,5 +1,5 @@
 {
-  "name": "next-starter-kit",
+  "name": "vercel-swag-store",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "format": "prettier --write src/* tests/*",
-    "prettier": "prettier -c src/* tests/*",
+    "format": "prettier --write \"{src,tests}/**/*.{ts,tsx,js,jsx,css,md,json}\"",
+    "prettier": "prettier -c \"{src,tests}/**/*.{ts,tsx,js,jsx,css,md,json}\"",
     "test": "pnpm test:e2e && pnpm test:api && pnpm test:unit",
     "test:setup": "playwright install",
     "test:e2e": "playwright test --config tests/playwright.e2e-config.ts",

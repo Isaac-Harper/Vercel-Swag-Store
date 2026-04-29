@@ -63,13 +63,7 @@ export async function generateMetadata(): Promise<Metadata> {
 	}
 }
 
-export default function RootLayout({
-	children,
-	modal,
-}: {
-	children: ReactNode
-	modal: ReactNode
-}) {
+export default function RootLayout({ children, modal }: { children: ReactNode; modal: ReactNode }) {
 	return (
 		<html
 			lang="en"

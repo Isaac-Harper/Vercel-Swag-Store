@@ -66,9 +66,7 @@ test.describe('Agent-friendly endpoints', () => {
 		expect(res.headers().vary ?? '').toMatch(/Accept/i)
 	})
 
-	test('product detail Link header points to its markdown alternate', async ({
-		request,
-	}) => {
+	test('product detail Link header points to its markdown alternate', async ({ request }) => {
 		const home = await request.get('/')
 		const html = await home.text()
 		const slug = html.match(/href="\/products\/([\w-]+)"/)?.[1]

@@ -27,13 +27,11 @@ export function PageLink({ href, current, disabled, children, ...rest }: Props) 
 			e.preventDefault()
 			startNav(href)
 		},
-		[href, startNav],
+		[href, startNav]
 	)
 
 	const className = `relative flex h-9 min-w-9 items-center justify-center rounded border px-3 text-sm transition ${
-		current
-			? 'border-black bg-black text-white'
-			: 'border-gray-200 hover:border-gray-400'
+		current ? 'border-black bg-black text-white' : 'border-gray-200 hover:border-gray-400'
 	} ${disabled ? 'pointer-events-none opacity-40' : ''}`
 
 	if (disabled) {

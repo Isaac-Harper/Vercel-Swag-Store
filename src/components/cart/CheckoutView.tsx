@@ -46,6 +46,34 @@ function formatExpiry(next: string, prev: string): string {
 	return digits.length >= 3 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits
 }
 
+/**
+ * Mock payment tokenizer. Mirrors the shape of a processor SDK call (Stripe
+ * `createPaymentMethod`, Adyen Web Drop-in, etc.): given raw card details, it
+ * returns an opaque token plus display-safe metadata. The PAN / CVC / expiry
+ * never leave this function — the form submission only carries the token, so
+ * the server action and downstream `/orders` endpoint stay outside PCI scope.
+ *
+ * In production, replace this with the real SDK call inside the processor's
+ * iframe so even React state never holds the raw PAN.
+ */
+type PaymentTokenResult = { token: string; last4: string; brand: string }
+
+function tokenize(cardNumber: string): PaymentTokenResult {
+	const digits = cardNumber.replace(/\D/g, '')
+	const last4 = digits.slice(-4).padStart(4, '0')
+	const lastDigit = Number(digits.slice(-1))
+	// Preserves the existing test fixture: even last digit approves, odd declines.
+	const status = Number.isFinite(lastDigit) && lastDigit % 2 === 0 ? 'approved' : 'declined'
+	const brand = /^4/.test(digits)
+		? 'visa'
+		: /^5[1-5]/.test(digits)
+			? 'mc'
+			: /^3[47]/.test(digits)
+				? 'amex'
+				: 'card'
+	return { token: `tok_mock_${status}_${last4}`, last4, brand }
+}
+
 const statesPattern = US_STATE_NAMES.join('|')
 
 const initialState: CheckoutState = { ok: false }
@@ -118,6 +146,13 @@ export function CheckoutView({
 		// because we still need the synchronous `submittingRef` dedupe to win
 		// over rapid double-clicks before `pending` flips on the next render.
 		const formData = new FormData(e.currentTarget)
+		// Tokenize client-side and forward only the opaque token + display
+		// metadata. The PAN / CVC / expiry inputs have no `name` attribute so
+		// they never enter `formData` to begin with — this stays explicit.
+		const payment = tokenize(cardNumber)
+		formData.set('payment-token', payment.token)
+		formData.set('payment-last4', payment.last4)
+		formData.set('payment-brand', payment.brand)
 		startTransition(() => formAction(formData))
 	}
 
@@ -315,7 +350,6 @@ export function CheckoutView({
 						</span>
 						<input
 							id="cart-cc-number"
-							name="cc-number"
 							autoComplete="cc-number"
 							inputMode="numeric"
 							maxLength={23}
@@ -325,6 +359,8 @@ export function CheckoutView({
 							value={cardNumber}
 							onChange={handleCardChange}
 							required
+							// Intentionally no `name` — card data is tokenized client-side
+							// in `handleSubmit` and never enters the FormData payload.
 							className="form-input font-mono tracking-wider"
 						/>
 					</label>
@@ -348,7 +384,6 @@ export function CheckoutView({
 							</span>
 							<input
 								id="cart-cc-exp"
-								name="cc-exp"
 								autoComplete="cc-exp"
 								inputMode="numeric"
 								maxLength={5}
@@ -358,6 +393,7 @@ export function CheckoutView({
 								value={expiry}
 								onChange={handleExpiryChange}
 								required
+								// No `name` — see card-number input above.
 								className="form-input font-mono tracking-wider"
 							/>
 						</label>
@@ -367,7 +403,6 @@ export function CheckoutView({
 							</span>
 							<input
 								id="cart-cc-csc"
-								name="cc-csc"
 								autoComplete="cc-csc"
 								inputMode="numeric"
 								maxLength={4}
@@ -377,6 +412,7 @@ export function CheckoutView({
 								value={cvc}
 								onChange={handleCvcChange}
 								required
+								// No `name` — see card-number input above.
 								className="form-input"
 							/>
 						</label>

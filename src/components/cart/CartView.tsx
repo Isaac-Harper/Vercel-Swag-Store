@@ -8,10 +8,7 @@ import { useCartStockMap } from '@/components/cart/CartStockProvider'
 import type { CartItem } from '@/types/cart'
 import { formatPrice } from '@/lib/format'
 import { cents } from '@/types/money'
-import {
-	PRODUCT_PLACEHOLDER_BLUR,
-	PRODUCT_PLACEHOLDER_SRC,
-} from '@/lib/image-placeholder'
+import { PRODUCT_PLACEHOLDER_BLUR, PRODUCT_PLACEHOLDER_SRC } from '@/lib/image-placeholder'
 
 type OptimisticAction =
 	| { type: 'update'; id: string; quantity: number }
@@ -22,7 +19,7 @@ function applyAction(state: CartItem[], action: OptimisticAction): CartItem[] {
 		return state.filter((item) => item.id !== action.id)
 	}
 	return state.map((item) =>
-		item.id === action.id ? { ...item, quantity: action.quantity } : item,
+		item.id === action.id ? { ...item, quantity: action.quantity } : item
 	)
 }
 
@@ -43,6 +40,7 @@ export function CartView({
 	const { addOptimistic: addOptimisticCount } = useCartCount()
 	const [, startTransition] = useTransition()
 	const stockMap = useCartStockMap()
+	const [error, setError] = useState<string | null>(null)
 
 	// Coalesce rapid +/- clicks per line: a leading 100ms wait clusters a quick
 	// double-click into one request; while one is in flight, additional clicks
@@ -68,14 +66,16 @@ export function CartView({
 				// request, the target changed and we loop to send the latest. Each
 				// iteration must await before checking again — sequential by design.
 				let lastSent = entry.target - 1
+				let lastOk = true
 				while (entry.target !== lastSent) {
 					const t = entry.target
 					// eslint-disable-next-line no-await-in-loop
-					if (t <= 0) await removeFromCart(id)
-					// eslint-disable-next-line no-await-in-loop
-					else await updateCartQuantity(id, t)
+					const result = t <= 0 ? await removeFromCart(id) : await updateCartQuantity(id, t)
+					lastOk = result.ok
 					lastSent = t
 				}
+				if (lastOk) setError(null)
+				else setError("Couldn't update your cart. Please try again.")
 				pendingRef.current.delete(id)
 			} finally {
 				setPendingCount((n) => n - 1)
@@ -88,14 +88,22 @@ export function CartView({
 	// Compute from optimistic quantity rather than the server's `lineTotal` —
 	// the server total is stale while +/- clicks are pending.
 	const subtotal = cents(
-		optimisticItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0),
+		optimisticItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
 	)
 
 	return (
 		<>
 			<div className="flex-1 overflow-y-auto p-4">
+				{error && (
+					<p
+						role="alert"
+						className="mb-4 rounded border border-red-300 bg-red-50 px-3 py-2 text-xs font-medium text-red-700"
+					>
+						{error}
+					</p>
+				)}
 				{optimisticItems.length === 0 ? (
-					<p className="text-gray-500">Your cart is empty.</p>
+					<p className="text-gray-600">Your cart is empty.</p>
 				) : (
 					<ul className="flex flex-col gap-4">
 						{optimisticItems.map(({ id, product, quantity }) => {
@@ -151,13 +159,13 @@ export function CartView({
 										<div className="flex items-start justify-between gap-2">
 											<div>
 												<h3 className="font-medium">{product.name}</h3>
-												<p className="text-sm text-gray-500">{formatPrice(cents(product.price))}</p>
+												<p className="text-sm text-gray-600">{formatPrice(cents(product.price))}</p>
 											</div>
 											<button
 												type="button"
 												onClick={remove}
 												aria-label={`Remove ${product.name}`}
-												className="cursor-pointer text-xs text-gray-500 transition-opacity hover:opacity-70 active:opacity-50"
+												className="cursor-pointer text-xs text-gray-600 transition-opacity hover:opacity-70 active:opacity-50"
 											>
 												Remove
 											</button>

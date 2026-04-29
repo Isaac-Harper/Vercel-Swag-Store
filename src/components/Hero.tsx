@@ -11,11 +11,7 @@ type HeroProps = {
 export function Hero({ heading, subheading, buttonText, buttonLink }: HeroProps) {
 	return (
 		<section className="flex flex-col items-center justify-center gap-4 px-4 py-24 text-center">
-			<svg
-				aria-hidden="true"
-				viewBox="0 0 75 65"
-				className="mb-4 h-20 w-auto sm:h-28 lg:h-36"
-			>
+			<svg aria-hidden="true" viewBox="0 0 75 65" className="mb-4 h-20 w-auto sm:h-28 lg:h-36">
 				<path d="M37.5896 0.25L74.5396 64.25H0.639648L37.5896 0.25Z" fill="currentColor" />
 			</svg>
 			<h1 className="text-4xl font-bold">{heading}</h1>

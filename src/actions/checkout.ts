@@ -19,33 +19,21 @@ const checkoutSchema = z.object({
 		.string()
 		.trim()
 		.refine((v) => US_STATE_NAMES.includes(v), 'Pick a valid US state'),
-	'postal-code': z
-		.string()
-		.regex(/^\d{5}(-\d{4})?$/, 'Use 12345 or 12345-6789'),
+	'postal-code': z.string().regex(/^\d{5}(-\d{4})?$/, 'Use 12345 or 12345-6789'),
 	country: z.string().trim().min(1, 'Required').max(60),
 	tel: z
 		.string()
 		.regex(/^[\d\s\-+()]{7,20}$/, 'Enter a valid phone number')
 		.optional()
 		.or(z.literal('')),
-	'cc-number': z
-		.string()
-		.refine(
-			(v) => /^\d{13,19}$/.test(v.replace(/\s+/g, '')),
-			'Enter a 13–19 digit card number',
-		),
+	// Card data (PAN, expiry, CVC) is tokenized client-side by `tokenize()` in
+	// CheckoutView and never reaches this action — only the opaque processor
+	// token plus display-safe metadata. The cardholder name is the lone
+	// non-tokenized field; processors generally accept it as billing metadata.
 	'cc-name': z.string().trim().min(1, 'Required').max(100),
-	'cc-exp': z
-		.string()
-		.regex(/^(0[1-9]|1[0-2])\/\d{2}$/, 'Use MM/YY')
-		.refine((v) => {
-			const [mm, yy] = v.split('/').map(Number)
-			const now = new Date()
-			const currentYY = now.getFullYear() % 100
-			const currentMonth = now.getMonth() + 1
-			return yy > currentYY || (yy === currentYY && mm >= currentMonth)
-		}, 'Card is expired'),
-	'cc-csc': z.string().regex(/^\d{3,4}$/, '3 or 4 digits'),
+	'payment-token': z.string().regex(/^tok_/, 'Invalid payment token'),
+	'payment-last4': z.string().regex(/^\d{4}$/, 'Invalid card metadata'),
+	'payment-brand': z.string().trim().min(1).max(20),
 })
 
 export type CheckoutState = {
@@ -55,7 +43,7 @@ export type CheckoutState = {
 
 export async function submitCheckout(
 	_prev: CheckoutState,
-	formData: FormData,
+	formData: FormData
 ): Promise<CheckoutState> {
 	const items = await getCart()
 	if (items.length === 0) {
@@ -72,9 +60,7 @@ export async function submitCheckout(
 
 	// Authoritative stock check before charging — guards against client races and
 	// inventory dropping between the cart view and the order being placed.
-	const stocks = await Promise.all(
-		items.map((item) => getProductStock(item.product.id)),
-	)
+	const stocks = await Promise.all(items.map((item) => getProductStock(item.product.id)))
 	for (let i = 0; i < items.length; i++) {
 		const item = items[i]
 		const available = stocks[i]?.stock
@@ -106,10 +92,10 @@ export async function submitCheckout(
 				phone: parsed.data.tel || undefined,
 			},
 			payment: {
-				cardNumber: parsed.data['cc-number'],
+				token: parsed.data['payment-token'],
 				cardholderName: parsed.data['cc-name'],
-				expiry: parsed.data['cc-exp'],
-				cvc: parsed.data['cc-csc'],
+				last4: parsed.data['payment-last4'],
+				brand: parsed.data['payment-brand'],
 			},
 		}),
 		getCartToken(),

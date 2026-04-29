@@ -69,6 +69,6 @@ export function CartLinkPending() {
 				</div>
 			</div>
 		</div>,
-		document.body,
+		document.body
 	)
 }

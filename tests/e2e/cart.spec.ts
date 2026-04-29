@@ -11,10 +11,7 @@ test.describe('Cart', () => {
 
 		// `force: true` — see search.spec.ts for the same WebKit hit-test issue
 		// (the `<Image fill>` reports as the topmost element over the link).
-		await Promise.all([
-			page.waitForURL(new RegExp(`${href}$`)),
-			firstCard.click({ force: true }),
-		])
+		await Promise.all([page.waitForURL(new RegExp(`${href}$`)), firstCard.click({ force: true })])
 
 		// Wait for the detail page to actually paint before hunting for the
 		// add-to-cart button — `<ProductStockAndCart>` is inside Suspense and
@@ -35,7 +32,7 @@ test.describe('Cart', () => {
 		const label = (await submitBtn.textContent()) ?? ''
 		test.skip(
 			/out of stock/i.test(label),
-			'first product is currently out of stock — cannot exercise add-to-cart',
+			'first product is currently out of stock — cannot exercise add-to-cart'
 		)
 
 		await submitBtn.click()

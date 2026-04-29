@@ -9,13 +9,7 @@ import { useSearchNav } from '@/components/search/SearchNavProvider'
  * list so the skeleton appears the instant the user clicks a page link,
  * regardless of whether the data for the next page is already cached.
  */
-export function PendingGate({
-	children,
-	fallback,
-}: {
-	children: ReactNode
-	fallback: ReactNode
-}) {
+export function PendingGate({ children, fallback }: { children: ReactNode; fallback: ReactNode }) {
 	const { isPending } = useSearchNav()
 	return isPending ? fallback : children
 }

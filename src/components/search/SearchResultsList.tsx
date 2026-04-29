@@ -44,11 +44,7 @@ export async function SearchResultsList({
 				</p>
 			)
 		}
-		return (
-			<p className="text-gray-600">
-				No products match {q ? `"${q}"` : 'your filters'}.
-			</p>
-		)
+		return <p className="text-gray-600">No products match {q ? `"${q}"` : 'your filters'}.</p>
 	}
 
 	const start = (page - 1) * PAGE_SIZE + 1
@@ -61,7 +57,7 @@ export async function SearchResultsList({
 					<Card key={product.slug} {...product} />
 				))}
 			</ul>
-			<p className="mt-4 text-xs text-gray-500">
+			<p className="mt-4 text-xs text-gray-600">
 				Showing {start}–{end} of {pagination.total} results.
 			</p>
 		</>

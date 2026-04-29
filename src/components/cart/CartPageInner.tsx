@@ -23,9 +23,7 @@ export function CartPageInner({
 	return (
 		<>
 			<div className="mb-8 flex items-baseline justify-between">
-				<h1 className="text-2xl sm:text-3xl font-bold">
-					{view === 'cart' ? 'Cart' : 'Checkout'}
-				</h1>
+				<h1 className="text-2xl sm:text-3xl font-bold">{view === 'cart' ? 'Cart' : 'Checkout'}</h1>
 				{view === 'checkout' && (
 					<button
 						type="button"

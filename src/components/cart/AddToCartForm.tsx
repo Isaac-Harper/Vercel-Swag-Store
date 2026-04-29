@@ -8,18 +8,12 @@ const ERROR_MESSAGES: Record<Exclude<AddToCartState, null | { ok: true }>['reaso
 	'unknown-product': 'This product is no longer available. Try refreshing the page.',
 }
 
-export function AddToCartForm({
-	slug,
-	stock,
-}: {
-	slug: string
-	stock: number
-}) {
+export function AddToCartForm({ slug, stock }: { slug: string; stock: number }) {
 	const { addOptimistic } = useCartCount()
 	const outOfStock = stock <= 0
 	const [state, formAction] = useActionState<AddToCartState, FormData>(
 		addToCart.bind(null, slug),
-		null,
+		null
 	)
 	const errorMessage = state && !state.ok ? ERROR_MESSAGES[state.reason] : null
 

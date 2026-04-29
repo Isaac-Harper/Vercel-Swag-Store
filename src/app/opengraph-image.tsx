@@ -20,14 +20,9 @@ export default function Image() {
 				}}
 			>
 				<svg width="260" height="225" viewBox="0 0 74 64">
-					<path
-						d="M37.5896 0.25L74.5396 64.25H0.639648L37.5896 0.25Z"
-						fill="#000000"
-					/>
+					<path d="M37.5896 0.25L74.5396 64.25H0.639648L37.5896 0.25Z" fill="#000000" />
 				</svg>
-				<div style={{ fontSize: 72, fontWeight: 700, color: '#000000' }}>
-					Vercel Swag Store
-				</div>
+				<div style={{ fontSize: 72, fontWeight: 700, color: '#000000' }}>Vercel Swag Store</div>
 				<div
 					style={{
 						fontSize: 28,
@@ -40,6 +35,6 @@ export default function Image() {
 				</div>
 			</div>
 		),
-		size,
+		size
 	)
 }

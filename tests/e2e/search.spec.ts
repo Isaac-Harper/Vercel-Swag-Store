@@ -28,10 +28,7 @@ test.describe('Search', () => {
 		// `<Link>`, and WebKit's hit-test reports the image as the topmost
 		// element. The click still navigates (the image is inside the link), but
 		// Playwright's actionability check rejects it without `force`.
-		await Promise.all([
-			page.waitForURL(new RegExp(`${href}$`)),
-			firstCard.click({ force: true }),
-		])
+		await Promise.all([page.waitForURL(new RegExp(`${href}$`)), firstCard.click({ force: true })])
 		await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
 	})
 

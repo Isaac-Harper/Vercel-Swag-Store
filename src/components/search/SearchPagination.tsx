@@ -28,10 +28,6 @@ export async function SearchPagination({
 	if (category) baseParams.category = category
 
 	return (
-		<Pagination
-			pathname="/search"
-			baseParams={baseParams}
-			totalPages={pagination.totalPages}
-		/>
+		<Pagination pathname="/search" baseParams={baseParams} totalPages={pagination.totalPages} />
 	)
 }

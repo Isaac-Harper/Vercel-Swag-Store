@@ -4,10 +4,7 @@ import { getStoreConfig } from '@/lib/api/store'
 import { SITE_URL } from '@/lib/site'
 
 export async function GET() {
-	const [config, featured] = await Promise.all([
-		getStoreConfig(),
-		listProducts({ featured: true }),
-	])
+	const [config, featured] = await Promise.all([getStoreConfig(), listProducts({ featured: true })])
 
 	const lines = [
 		`# ${config.storeName}`,

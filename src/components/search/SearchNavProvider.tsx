@@ -57,7 +57,7 @@ export function SearchNavProvider({ children }: { children: ReactNode }) {
 				router.push(href as Route, { scroll: false })
 			})
 		},
-		[router],
+		[router]
 	)
 
 	// Clear the optimistic href once the transition commits — after that,
@@ -67,8 +67,6 @@ export function SearchNavProvider({ children }: { children: ReactNode }) {
 	}, [isPending])
 
 	return (
-		<SearchNavContext value={{ startNav, isPending, pendingHref }}>
-			{children}
-		</SearchNavContext>
+		<SearchNavContext value={{ startNav, isPending, pendingHref }}>{children}</SearchNavContext>
 	)
 }

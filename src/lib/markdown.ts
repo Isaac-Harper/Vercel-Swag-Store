@@ -2,6 +2,14 @@ import { formatPrice } from '@/lib/format'
 import type { Product } from '@/types/product'
 
 /**
+ * SAFETY: this module emits markdown for AI agent consumption (the `/md/...`
+ * route handlers). Product fields are interpolated unescaped, so a name like
+ * `[click](javascript:…)` survives intact. Do **not** render this output in a
+ * browser-side markdown viewer (e.g. `<ReactMarkdown>`) without sanitizing
+ * first — the agent surface is the only intended consumer.
+ */
+
+/**
  * Wraps a markdown body in a `Response` with the headers agent crawlers
  * expect: `Content-Type: text/markdown` and a rough `X-Markdown-Tokens`
  * count (chars/4 — close enough to GPT/Claude tokenization for budgeting).
@@ -33,7 +41,7 @@ export function productLineMarkdown(product: Product, siteUrl: string): string {
 export function productDetailMarkdown(
 	product: Product,
 	siteUrl: string,
-	stock: number | null,
+	stock: number | null
 ): string {
 	const lines: string[] = [
 		`# ${product.name}`,
@@ -53,10 +61,6 @@ export function productDetailMarkdown(
 		}
 		lines.push('')
 	}
-	lines.push(
-		'---',
-		'',
-		`HTML version: ${siteUrl}/products/${product.slug}`,
-	)
+	lines.push('---', '', `HTML version: ${siteUrl}/products/${product.slug}`)
 	return lines.join('\n')
 }

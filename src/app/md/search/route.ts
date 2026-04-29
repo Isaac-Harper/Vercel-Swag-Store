@@ -43,7 +43,7 @@ export async function GET(request: Request) {
 			if (p > 1) qs.set('page', String(p))
 			const suffix = qs.toString()
 			lines.push(
-				`- Page ${p}: ${SITE_URL}/search${suffix ? `?${suffix}` : ''}${p === pagination.page ? ' (current)' : ''}`,
+				`- Page ${p}: ${SITE_URL}/search${suffix ? `?${suffix}` : ''}${p === pagination.page ? ' (current)' : ''}`
 			)
 		}
 	}

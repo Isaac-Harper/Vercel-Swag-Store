@@ -1,10 +1,7 @@
 'use client'
 
 import { createContext, Suspense, useContext, useState, type ReactNode } from 'react'
-import {
-	CartStockHydrator,
-	CartStockSetterContext,
-} from '@/components/cart/CartStockHydrator'
+import { CartStockHydrator, CartStockSetterContext } from '@/components/cart/CartStockHydrator'
 
 type StockMap = Map<string, number>
 

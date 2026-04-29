@@ -21,6 +21,6 @@ export default function Icon() {
 				</svg>
 			</div>
 		),
-		size,
+		size
 	)
 }

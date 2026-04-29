@@ -1,25 +1,14 @@
 'use client'
 
 import { usePathname, useSearchParams } from 'next/navigation'
-import {
-	use,
-	useEffect,
-	useRef,
-	useState,
-	type ChangeEvent,
-	type FormEvent,
-} from 'react'
+import { use, useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { useSearchNav } from '@/components/search/SearchNavProvider'
 import type { Category } from '@/types/category'
 
 const DEBOUNCE_MS = 300
 const AUTO_SEARCH_MIN_CHARS = 3
 
-export function SearchForm({
-	categoriesPromise,
-}: {
-	categoriesPromise: Promise<Category[]>
-}) {
+export function SearchForm({ categoriesPromise }: { categoriesPromise: Promise<Category[]> }) {
 	// Suspends the form until the categories list arrives. The parent wraps
 	// `<SearchForm>` in a `<Suspense fallback={<SearchFormSkeleton />}>`, so
 	// this `use()` makes that fallback actually show (previously the page
@@ -48,7 +37,7 @@ export function SearchForm({
 		() => () => {
 			if (debounceRef.current) clearTimeout(debounceRef.current)
 		},
-		[],
+		[]
 	)
 
 	// Clones the current URL params and mutates only `q` / `category`, so
@@ -80,9 +69,7 @@ export function SearchForm({
 		}
 	}
 
-	function handleCategoryChange({
-		target: { value },
-	}: ChangeEvent<HTMLSelectElement>) {
+	function handleCategoryChange({ target: { value } }: ChangeEvent<HTMLSelectElement>) {
 		setCategory(value)
 		pushQuery(q, value)
 	}

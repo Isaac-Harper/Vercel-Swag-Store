@@ -2,7 +2,7 @@ import 'server-only'
 
 import { cacheLife } from 'next/cache'
 import { z } from 'zod'
-import { apiFetch } from '@/lib/api/client'
+import { ApiError, apiFetch } from '@/lib/api/client'
 import type { ProductListResponse, ProductResponse, StockResponse } from '@/types/api'
 import { type Cents, cents } from '@/types/money'
 import type { PaginationMeta } from '@/types/pagination'
@@ -70,7 +70,7 @@ export type ListProductsOptions = {
 }
 
 export async function listProductsPaginated(
-	opts: ListProductsOptions = {},
+	opts: ListProductsOptions = {}
 ): Promise<{ data: Product[]; pagination: PaginationMeta }> {
 	'use cache'
 
@@ -102,7 +102,7 @@ export async function getProduct(slug: string): Promise<Product | null> {
 		const raw = await apiFetch<unknown>(`/products/${encodeURIComponent(slug)}`)
 		return apiSingleResponseSchema.parse(raw).data
 	} catch (err) {
-		if (err instanceof Error && err.message.includes('→ 404')) return null
+		if (err instanceof ApiError && err.status === 404) return null
 		throw err
 	}
 }
@@ -117,7 +117,7 @@ export async function getProductStock(slugOrId: string): Promise<StockInfo | nul
 		const raw = await apiFetch<unknown>(`/products/${encodeURIComponent(slugOrId)}/stock`)
 		return apiStockResponseSchema.parse(raw).data
 	} catch (err) {
-		if (err instanceof Error && err.message.includes('→ 404')) return null
+		if (err instanceof ApiError && err.status === 404) return null
 		throw err
 	}
 }

@@ -45,7 +45,7 @@ export function GET() {
 		'Content-Signal: search=yes, ai-input=yes, ai-train=no',
 		'',
 		`Sitemap: ${SITE_URL}/sitemap.xml`,
-		'',
+		''
 	)
 
 	return new Response(lines.join('\n'), {

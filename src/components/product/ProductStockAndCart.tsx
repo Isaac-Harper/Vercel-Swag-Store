@@ -8,13 +8,7 @@ function getStockMessage(info: StockInfo | null): string {
 	return 'In stock'
 }
 
-export async function ProductStockAndCart({
-	id,
-	slug,
-}: {
-	id: string
-	slug: string
-}) {
+export async function ProductStockAndCart({ id, slug }: { id: string; slug: string }) {
 	// Detail page spec requires real-time stock, so bypass the hour-cached
 	// variant used by listings. The parent wraps this in Suspense so the
 	// live read streams in after the prerendered shell.
@@ -24,9 +18,7 @@ export async function ProductStockAndCart({
 
 	return (
 		<>
-			<p className={`text-sm ${stock === 0 ? 'text-red-600' : 'text-gray-600'}`}>
-				{message}
-			</p>
+			<p className={`text-sm ${stock === 0 ? 'text-red-600' : 'text-gray-600'}`}>{message}</p>
 			<AddToCartForm slug={slug} stock={stock} />
 		</>
 	)
